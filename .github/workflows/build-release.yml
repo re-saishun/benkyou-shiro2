@@ -9,7 +9,8 @@ jobs:
   build-all:
     uses: ./.github/workflows/build-all.yml
     secrets: inherit
-    create-release:
+
+  create-release:
     runs-on: ubuntu-latest
     needs: build-all
     permissions:
