@@ -1,0 +1,57 @@
+{
+  "id": "n5-basic",
+  "title": "JLPT N5 Dasar",
+  "level": "N5",
+  "description": "Pola tata bahasa dasar N5",
+  "version": 1,
+  "points": [
+    {
+      "key": "wa-desu",
+      "title": "AはBです",
+      "structure": "N1 は N2 です",
+      "meaning": "N1 adalah N2",
+      "nuance": "は dibaca 'wa' saat menjadi partikel topik.",
+      "examples": [
+        {"japanese": "私は学生です。", "reading": "わたしはがくせいです。", "translation": "Saya adalah pelajar."}
+      ],
+      "quiz": {
+        "question": "Pilih partikel yang tepat: 私__学生です。",
+        "options": ["は", "を", "に"],
+        "correctIndex": 0,
+        "explanation": "は menandai topik kalimat."
+      }
+    },
+    {
+      "key": "wo-object",
+      "title": "Nをverb",
+      "structure": "N を V",
+      "meaning": "Penanda objek langsung",
+      "nuance": "",
+      "examples": [
+        {"japanese": "水を飲みます。", "reading": "みずをのみます。", "translation": "Saya minum air."}
+      ],
+      "quiz": {
+        "question": "水__飲みます。",
+        "options": ["を", "が", "で"],
+        "correctIndex": 0,
+        "explanation": "を menandai objek."
+      }
+    },
+    {
+      "key": "ni-place",
+      "title": "Nに行きます",
+      "structure": "N に 行きます",
+      "meaning": "Pergi ke N",
+      "nuance": "に menunjukkan tujuan.",
+      "examples": [
+        {"japanese": "学校に行きます。", "reading": "がっこうにいきます。", "translation": "Saya pergi ke sekolah."}
+      ],
+      "quiz": {
+        "question": "学校__行きます。",
+        "options": ["に", "を", "は"],
+        "correctIndex": 0,
+        "explanation": "に menandai tujuan."
+      }
+    }
+  ]
+}

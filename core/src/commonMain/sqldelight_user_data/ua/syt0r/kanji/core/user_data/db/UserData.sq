@@ -1,0 +1,364 @@
+PRAGMA user_version = 13;
+
+getLastInsertRowId:
+SELECT last_insert_rowid();
+
+------- LETTER DECKS -------
+
+CREATE TABLE IF NOT EXISTS letter_deck (
+    id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    name TEXT NOT NULL,
+    position INTEGER NOT NULL DEFAULT 0 -- bigger values are at the top of the list
+);
+
+CREATE TABLE IF NOT EXISTS letter_deck_entry (
+    character TEXT NOT NULL,
+    deck_id INTEGER NOT NULL,
+    PRIMARY KEY(character, deck_id),
+    FOREIGN KEY(deck_id) REFERENCES letter_deck(id) ON UPDATE NO ACTION ON DELETE CASCADE
+);
+
+insertLetterDeck:
+INSERT INTO letter_deck(name, position)
+SELECT ?, IFNULL(MAX(position) + 1, 0) FROM letter_deck;
+
+deleteLetterDeck {
+    DELETE FROM letter_deck WHERE id=:id;
+    DELETE FROM letter_deck_entry WHERE deck_id=:id;
+}
+
+deleteLetterDecks {
+    DELETE FROM letter_deck WHERE id IN :deckIds;
+    DELETE FROM letter_deck_entry WHERE deck_id IN :deckIds;
+}
+
+updateLetterDeckTitle:
+UPDATE letter_deck SET name=? WHERE id=?;
+
+updateLetterDeckPosition:
+UPDATE letter_deck SET position=? WHERE id=?;
+
+getAllLetterDecks:
+SELECT * FROM letter_deck;
+
+getLetterDeck:
+SELECT * FROM letter_deck WHERE id=?;
+
+insertOrIgnoreLetterDeckEntry:
+INSERT OR IGNORE INTO letter_deck_entry (character,deck_id) VALUES (?,?);
+
+deleteLetterDeckEntry:
+DELETE FROM letter_deck_entry WHERE deck_id=? AND character=?;
+
+migrateLetterDeckEntries:
+UPDATE OR REPLACE letter_deck_entry
+SET deck_id = :deckId
+WHERE deck_id IN :deckIdToMigrate;
+
+getEntriesForLetterDeck:
+SELECT * FROM letter_deck_entry WHERE deck_id=?;
+
+------- VOCAB DECKS -------
+
+CREATE TABLE IF NOT EXISTS vocab_deck (
+    id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    title TEXT NOT NULL,
+    position INTEGER NOT NULL DEFAULT 0 -- bigger values are at the top of the list
+);
+
+CREATE TABLE IF NOT EXISTS vocab_deck_entry (
+    id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    deck_id INTEGER NOT NULL,
+    kanji_reading TEXT,
+    kana_reading TEXT NOT NULL,
+    meaning TEXT,
+    word_id INTEGER,
+    FOREIGN KEY(deck_id) REFERENCES vocab_deck(id) ON UPDATE NO ACTION ON DELETE CASCADE
+);
+
+insertVocabDeck:
+INSERT INTO vocab_deck(title, position)
+SELECT :title, IFNULL(MAX(position) + 1, 0) FROM vocab_deck;
+
+updateVocabDeckTitle:
+UPDATE vocab_deck SET title = ? WHERE id = ?;
+
+deleteVocabDeck:
+DELETE FROM vocab_deck WHERE id = :deckId;
+
+updateVocabDeckPosition:
+UPDATE vocab_deck SET position=? WHERE id=?;
+
+insertVocabDeckEntry:
+INSERT OR IGNORE INTO vocab_deck_entry(deck_id, kanji_reading, kana_reading, meaning, word_id)
+VALUES (?, ?, ?, ?, ?);
+
+updateVocabDeckEntry:
+UPDATE vocab_deck_entry SET kanji_reading=?, kana_reading=?, meaning=? WHERE id=?;
+
+deleteVocabDeckEntry:
+DELETE FROM vocab_deck_entry WHERE id = ?;
+
+migrateVocabDeckEntries:
+UPDATE OR REPLACE vocab_deck_entry
+SET deck_id = :deckId
+WHERE deck_id IN :deckIdToMigrate;
+
+getVocabDecks:
+SELECT * FROM vocab_deck;
+
+getVocabDeckEntryIds:
+SELECT id FROM vocab_deck_entry WHERE deck_id = :deckId;
+
+getVocabDeckEntries:
+SELECT * FROM vocab_deck_entry;
+
+getVocabDecksWithEntryLike:
+SELECT DISTINCT deck_id
+FROM vocab_deck_entry
+WHERE kanji_reading = ? AND kana_reading = ?;
+
+
+------- FSRS -------
+
+CREATE TABLE IF NOT EXISTS fsrs_card (
+    key TEXT NOT NULL,
+    practice_type INTEGER NOT NULL,
+    status INTEGER NOT NULL,
+    stability REAL NOT NULL,
+    difficulty REAL NOT NULL,
+    lapses INTEGER NOT NULL,
+    repeats INTEGER NOT NULL,
+    last_review INTEGER NOT NULL,
+    interval INTEGER NOT NULL,
+    PRIMARY KEY(key, practice_type)
+);
+
+upsertFsrsCard:
+INSERT OR REPLACE INTO fsrs_card
+VALUES ?;
+
+getFsrsCards:
+SELECT * FROM fsrs_card;
+
+------- REVIEW HISTORY -------
+
+CREATE TABLE IF NOT EXISTS review_history(
+    key TEXT NOT NULL,
+    practice_type INTEGER NOT NULL,
+    timestamp INTEGER NOT NULL,
+    duration INTEGER NOT NULL,
+    grade INTEGER NOT NULL,
+    mistakes INTEGER NOT NULL,
+    deck_id INTEGER NOT NULL,
+    PRIMARY KEY(key, practice_type, timestamp)
+);
+
+upsertReview:
+INSERT OR REPLACE INTO review_history(key, practice_type, timestamp, duration, grade, mistakes, deck_id)
+VALUES (?,?,?,?,?,?,?);
+
+getReviewHistory:
+SELECT key, practice_type, timestamp, duration, grade, mistakes, deck_id
+FROM review_history
+WHERE timestamp > :start AND timestamp < :end;
+
+getNewItemsCountForPeriod:
+SELECT COUNT(*)
+FROM (
+    SELECT key, practice_type
+    FROM review_history
+    GROUP BY key, practice_type
+    HAVING MIN(timestamp) > :start AND MIN(timestamp) < :end
+);
+
+migrateDeckForReviewHistory:
+UPDATE OR REPLACE review_history
+SET deck_id = :deckId
+WHERE deck_id IN :deckIdToMigrate AND practice_type IN :practiceTypes;
+
+getFirstReview:
+SELECT key, practice_type, timestamp, duration, grade, mistakes, deck_id
+FROM review_history
+WHERE key = :itemKey AND practice_type = :practiceType
+ORDER BY timestamp
+LIMIT 1;
+
+getLastReview:
+SELECT key, practice_type, timestamp, duration, grade, mistakes, deck_id
+FROM review_history
+WHERE key = :itemKey AND practice_type = :practiceType
+ORDER BY timestamp DESC
+LIMIT 1;
+
+getLastDeckReview:
+SELECT MAX(timestamp)
+FROM review_history
+WHERE deck_id = :deckId AND practice_type IN :practiceTypes
+LIMIT 1;
+
+getTotalReviewsCount:
+SELECT COUNT(*)
+FROM review_history;
+
+getTotalReviewsCountOfType:
+SELECT COUNT(*)
+FROM review_history
+WHERE key = :key AND practice_type = :practiceType;
+
+getUniqueReviewItemsCountForPracticeTypes:
+SELECT COUNT(DISTINCT key)
+FROM review_history
+WHERE practice_type IN :practiceTypes;
+
+getTotalReviewsDuration:
+SELECT SUM(CASE WHEN duration > :reviewDurationLimit THEN :reviewDurationLimit ELSE duration END)
+FROM review_history;
+
+getReviewStreaks:
+WITH DateList AS (
+    SELECT DISTINCT date(round(timestamp / 1000 - :offset_millis / 1000), 'unixepoch', 'localtime') AS date
+    FROM review_history
+),
+DateWithLag AS (
+    SELECT
+    date,
+    JULIANDAY(date) - (
+        SELECT COUNT(*)
+        FROM DateList AS inner_dates
+        WHERE inner_dates.date <= outer_dates.date
+    ) AS day_group
+    FROM DateList AS outer_dates
+),
+ContinuousGroups AS (
+    SELECT MIN(date) AS start_date, MAX(date) AS end_date, COUNT(*) AS sequence_length
+    FROM DateWithLag
+    GROUP BY day_group
+)
+SELECT *
+FROM ContinuousGroups
+ORDER BY end_date DESC;
+
+getReviewHistoryStatsForKeys:
+WITH
+    Reviews AS (SELECT * FROM review_history WHERE key IN :keys),
+    ReviewKeys AS (SELECT DISTINCT key FROM Reviews),
+    GroupedReviews AS (SELECT key, practice_type, practice_type || '|' || MIN(timestamp) || '|' || MAX(timestamp) PracticeTypeData
+                       FROM Reviews
+                       GROUP BY key, practice_type),
+    FormattedReviews AS (SELECT key, GROUP_CONCAT(PracticeTypeData, ';') AS ReviewData
+                         FROM GroupedReviews
+                         GROUP BY key)
+SELECT ReviewKeys.key, ReviewData
+FROM ReviewKeys
+LEFT JOIN FormattedReviews ON ReviewKeys.key = FormattedReviews.key;
+
+
+------- TEXT ANALYSIS -------
+
+CREATE TABLE text_analysis (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    text TEXT NOT NULL,
+    timestamp INTEGER NOT NULL,
+    translation TEXT NOT NULL,
+    annotatedTextJson TEXT NOT NULL
+);
+
+insertTextAnalysisData:
+INSERT INTO text_analysis (text, timestamp, translation, annotatedTextJson)
+VALUES (?, ?, ?, ?);
+
+countTextAnalysisData:
+SELECT COUNT(*) FROM text_analysis;
+
+selectAllTextAnalysisData:
+SELECT id, text, timestamp, translation, annotatedTextJson
+FROM text_analysis
+ORDER BY timestamp DESC
+LIMIT :offset, :limit;
+
+------- GRAMMAR DECKS -------
+
+CREATE TABLE IF NOT EXISTS grammar_deck (
+    id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    remote_id TEXT NOT NULL UNIQUE,
+    title TEXT NOT NULL,
+    level TEXT NOT NULL DEFAULT '',
+    description TEXT NOT NULL DEFAULT '',
+    source_url TEXT NOT NULL DEFAULT '',
+    version INTEGER NOT NULL DEFAULT 1,
+    position INTEGER NOT NULL DEFAULT 0
+);
+
+CREATE TABLE IF NOT EXISTS grammar_point (
+    id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    deck_id INTEGER NOT NULL,
+    point_key TEXT NOT NULL,
+    title TEXT NOT NULL,
+    structure TEXT NOT NULL,
+    meaning TEXT NOT NULL,
+    nuance TEXT NOT NULL DEFAULT '',
+    examples_json TEXT NOT NULL,
+    quiz_question TEXT NOT NULL DEFAULT '',
+    quiz_options_json TEXT NOT NULL,
+    quiz_correct_index INTEGER NOT NULL DEFAULT 0,
+    quiz_explanation TEXT NOT NULL DEFAULT '',
+    UNIQUE(deck_id, point_key),
+    FOREIGN KEY(deck_id) REFERENCES grammar_deck(id) ON UPDATE NO ACTION ON DELETE CASCADE
+);
+
+insertGrammarDeck:
+INSERT INTO grammar_deck(remote_id, title, level, description, source_url, version, position)
+VALUES (:remoteId, :title, :level, :description, :sourceUrl, :version, IFNULL((SELECT MAX(position) + 1 FROM grammar_deck), 0));
+
+updateGrammarDeckMetadata:
+UPDATE grammar_deck
+SET title = :title,
+    level = :level,
+    description = :description,
+    source_url = :sourceUrl,
+    version = :version
+WHERE id = :id;
+
+updateGrammarDeckPosition:
+UPDATE grammar_deck SET position = :position WHERE id = :id;
+
+deleteGrammarDeck {
+    DELETE FROM grammar_point WHERE deck_id = :id;
+    DELETE FROM grammar_deck WHERE id = :id;
+}
+
+getAllGrammarDecks:
+SELECT * FROM grammar_deck ORDER BY position DESC, id ASC;
+
+getGrammarDeckById:
+SELECT * FROM grammar_deck WHERE id = :id;
+
+getGrammarDeckByRemoteId:
+SELECT * FROM grammar_deck WHERE remote_id = :remoteId;
+
+insertOrReplaceGrammarPoint:
+INSERT OR REPLACE INTO grammar_point(
+    deck_id,
+    point_key,
+    title,
+    structure,
+    meaning,
+    nuance,
+    examples_json,
+    quiz_question,
+    quiz_options_json,
+    quiz_correct_index,
+    quiz_explanation
+)
+VALUES (?,?,?,?,?,?,?,?,?,?,?);
+
+deleteGrammarPointsNotInKeys:
+DELETE FROM grammar_point WHERE deck_id = :deckId AND point_key NOT IN :keys;
+
+getGrammarPointsForDeck:
+SELECT * FROM grammar_point WHERE deck_id = :deckId ORDER BY id ASC;
+
+getAllGrammarPoints:
+SELECT * FROM grammar_point ORDER BY id ASC;
+

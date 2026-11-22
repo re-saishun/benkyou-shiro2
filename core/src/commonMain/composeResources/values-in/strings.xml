@@ -1,0 +1,187 @@
+<resources>
+
+    <string name="study_category_letter">Karakter</string>
+    <string name="study_category_vocab">Kosakata</string>
+    <string name="study_category_grammar">Tata Bahasa</string>
+    <string name="practice_type_writing">Menulis</string>
+    <string name="practice_type_flashcard">Kartu Hafalan</string>
+    <string name="practice_type_reading_picker">Pilihan Bacaan</string>
+    <string name="practice_type_grammar_read">Baca</string>
+    <string name="practice_type_grammar_quiz">Kuis</string>
+    <string name="practice_type_grammar_test">Tes</string>
+
+    <string name="srs_status_new">Baru</string>
+    <string name="srs_status_due">Perlu Diulang</string>
+    <string name="srs_status_done">Selesai</string>
+
+    <string name="dialog_apply">Terapkan</string>
+    <string name="dialog_cancel">Batal</string>
+
+    <string name="vocab_card_missing_meaning">[Tidak ada arti]</string>
+    <string name="error_unknown">Kesalahan tidak diketahui</string>
+
+    <string name="update_snackbar_title">Aplikasi telah diperbarui</string>
+    <string name="update_snackbar_action">Catatan Perubahan</string>
+
+    <string name="general_dashboard_header_streak_current">Hari Berturut-turut</string>
+    <string name="general_dashboard_header_streak_longest">Rekor Terpanjang</string>
+    <string name="general_dashboard_header_reviews">Ulasan Hari Ini</string>
+
+    <string name="general_dashboard_study_target_title">Target Belajar</string>
+    <string name="general_dashboard_study_target_today_badge">HARI INI</string>
+    <string name="stats_today_new">Baru</string>
+    <string name="stats_today_time_spent">Waktu Belajar</string>
+    <string name="stats_today_review">Ulasan</string>
+    <string name="general_dashboard_statistic_accordion">Statistik</string>
+    <string name="general_dashboard_study_target_edit">Edit</string>
+    <string name="general_dashboard_study_target_daily_limit">Batas Harian</string>
+    <string name="general_dashboard_study_target_empty">Pilih</string>
+    <string name="general_dashboard_study_target_no_decks">Belum ada dek. Klik untuk membuat</string>
+    <string name="general_dashboard_study_target_nothing_left">Tidak ada lagi yang perlu dipelajari hari ini</string>
+
+    <string name="general_dashboard_text_analysis">Analisis Teks (Pratinjau)</string>
+    <string name="general_dashboard_social">Komunitas</string>
+    <string name="general_dashboard_downloads">Unduhan</string>
+    <string name="general_dashboard_tutorial">Panduan</string>
+
+    <string name="social_discord">Discord</string>
+    <string name="social_youtube">YouTube</string>
+
+    <string name="setting_daily_reset_time_item">Waktu Reset Harian</string>
+
+    <string name="text_analysis_title">Analisis Teks</string>
+    <string name="text_analysis_history_title">Riwayat</string>
+    <string name="text_analysis_history_empty">Tidak ada riwayat</string>
+
+    <string name="text_analysis_offer_title">Analisis teks Anda sendiri, simpan karakter dan kosakata</string>
+    <string name="text_analysis_offer_subtitle">Memerlukan akun. Gratis selama masa pratinjau hingga pemberitahuan lebih lanjut</string>
+    <string name="text_analysis_input_placeholder">Ketik teks di sini</string>
+    <string name="text_analysis_translation_placeholder">Terjemahan</string>
+
+    <string name="text_analysis_configuration_title">Konfigurasi</string>
+    <string name="text_analysis_configuration_provider_mode">Penyedia Layanan</string>
+    <string name="text_analysis_configuration_auto_title">Otomatis (Default)</string>
+    <string name="text_analysis_configuration_auto_description">Ichiran + Gemini 2.0 Flash (memerlukan akun)</string>
+    <string name="text_analysis_configuration_gemini_title">Gemini API (API Sendiri)</string>
+    <string name="text_analysis_configuration_gemini_description">Gunakan API key Gemini milik Anda (%1$s)</string>
+    <string name="text_analysis_configuration_gemini_api_key_label">Gemini API Key</string>
+    <string name="text_analysis_configuration_gemini_api_key_hint">Masukkan API key Anda (AIza...)</string>
+    <string name="text_analysis_configuration_gemini_model_label">Model: %1$s</string>
+    <string name="text_analysis_configuration_save">Simpan</string>
+    <string name="text_analysis_configuration_analysis_provider">Penyedia Analisis</string>
+    <string name="text_analysis_ichiran_description">Lambat, hingga 100 karakter</string>
+    <string name="text_analysis_configuration_translation_provider">Penyedia Terjemahan</string>
+    <string name="text_analysis_gemini_key_missing_title">API key Gemini belum diisi</string>
+    <string name="text_analysis_gemini_key_missing_subtitle">Ketuk untuk memasukkan API key Gemini Anda (%1$s)</string>
+    <string name="text_analysis_offer_custom_key_action">Atau gunakan API key Gemini sendiri</string>
+
+    <string name="text_analysis_action_furigana">Furigana</string>
+    <string name="text_analysis_action_highlight">Sorot Kelas Kata</string>
+    <string name="text_analysis_action_save_letters">Simpan Karakter</string>
+
+    <string name="text_analysis_save_words_counter">Kata dipilih: %1$s</string>
+    <string name="text_analysis_save_words_cancel">Batal</string>
+    <string name="text_analysis_save_words_apply">Tambahkan ke Dek</string>
+
+    <string name="text_analysis_save_letters_counter">Karakter dipilih: %1$s</string>
+    <string name="text_analysis_save_letters_select_kanji">Pilih Semua Kanji</string>
+    <string name="text_analysis_save_letters_cancel">Batal</string>
+    <string name="text_analysis_save_letters_apply">Tambahkan ke Dek</string>
+
+    <string name="text_analysis_alternative_words">Kata alternatif: </string>
+    <string name="text_analysis_word_parse_error">Kesalahan</string>
+
+    <string name="text_analysis_preview_text">富士山は日本の象徴で、登山シーズンになると多くの登山者が頂上を目指します。その絶景は一生の思い出になります。</string>
+    <string name="text_analysis_preview_translation">Gunung Fuji adalah simbol Jepang, dan saat musim pendakian, banyak pendaki menuju puncaknya. Pemandangan indahnya menjadi kenangan seumur hidup.</string>
+
+    <string name="common_dashboard_deck_details">Detail</string>
+    <string name="common_dashboard_deck_edit">Edit</string>
+
+    <string name="practice_new_cards_config_title">Urutan kartu baru</string>
+    <string name="practice_new_cards_config_subtitle">Posisi kartu baru dalam antrean latihan</string>
+    <string name="practice_new_cards_config_first">Di Awal</string>
+    <string name="practice_new_cards_config_last">Di Akhir</string>
+    <string name="practice_new_cards_config_mixed">Campur</string>
+
+    <string name="practice_summary_header_time">Waktu Belajar</string>
+    <string name="practice_summary_header_reviews">Kartu Diulas</string>
+    <string name="practice_summary_header_accuracy">Akurasi</string>
+    <string name="practice_summary_item_insights">Total Ulasan %1$s・Ulasan Berikutnya %2$s</string>
+    <string name="practice_summary_empty">Tidak ada ulasan</string>
+    <string name="practice_summary_button">Selesai</string>
+
+    <string name="save_letters_dialog_title">Tambahkan karakter ke dek</string>
+    <string name="save_letters_dialog_contains">Sudah ada di: %1$s</string>
+    <string name="save_word_dialog_title">Tambahkan %1$s ke dek kosakata</string>
+    <string name="save_word_dialog_contains_hint">Sudah ada di dek</string>
+    <string name="save_word_dialog_create_deck_button">Buat Dek Baru</string>
+    <string name="save_word_dialog_create_deck_title_hint">Ketik judul dek di sini...</string>
+    <string name="save_word_dialog_saving_state_message">Menambahkan</string>
+    <string name="save_word_dialog_completed_state_message">Ditambahkan</string>
+    <string name="save_word_dialog_button_cancel">Batal</string>
+    <string name="save_word_dialog_button_add">Tambah</string>
+
+    <string name="migration_dialog_title">Menyelesaikan Pembaruan</string>
+    <string name="migration_dialog_loading_data">Memuat data...</string>
+    <string name="migration_dialog_migrating_vocab_cards">Memperbarui kartu kosakata...</string>
+    <string name="migration_dialog_saving_changes">Menerapkan perubahan...</string>
+
+    <string name="vocab_card_title">Kartu Kosakata</string>
+    <string name="vocab_card_kanji">Bacaan Kanji</string>
+    <string name="vocab_card_kana">Bacaan Kana</string>
+    <string name="vocab_card_meaning">Arti</string>
+    <string name="vocab_card_dictionary_meaning">Gunakan arti dari kamus</string>
+    <string name="vocab_card_action_save">Simpan</string>
+    <string name="vocab_card_action_edit">Edit</string>
+    <string name="vocab_card_action_add">Tambah</string>
+    <string name="vocab_card_invalid_kanji">Bacaan kanji aktif tetapi masih kosong</string>
+    <string name="vocab_card_invalid_kana">Bacaan kana tidak boleh kosong</string>
+    <string name="vocab_card_invalid_meaning">Arti tidak boleh kosong</string>
+
+    <plurals name="account_subscription_duration_years">
+        <item quantity="one">%1$d Tahun</item>
+        <item quantity="other">%1$d Tahun</item>
+    </plurals>
+
+    <plurals name="account_subscription_duration_months">
+        <item quantity="one">%1$d Bulan</item>
+        <item quantity="other">%1$d Bulan</item>
+    </plurals>
+
+    <plurals name="account_subscription_duration_days">
+        <item quantity="one">%1$d Hari</item>
+        <item quantity="other">%1$d Hari</item>
+    </plurals>
+
+    <string name="account_visit_website">Lihat di Web</string>
+    <string name="account_delete">Hapus Akun</string>
+
+    <string name="account_subscription_duration_unknown">Format durasi tidak dikenal: %1$s</string>
+
+    <string name="snackbar_sub_expired_message">Masa aktif langganan Anda telah berakhir</string>
+    <string name="snackbar_sub_expired_action">Akun</string>
+
+    <string name="sponsor_recent_donations_title">Donasi Terbaru</string>
+    <string name="sponsor_recent_donations_error">Kesalahan: %1$s</string>
+
+    <string-array name="sponsor_recent_donations_messages">
+        <item>Seseorang yang baik hati mendonasikan %1$s¥! Terima kasih banyak!</item>
+        <item>Pengguna yang baik mendonasikan %1$s¥! Semoga kemampuan kanji Anda terus berkembang pesat.</item>
+        <item>Seseorang baru saja mendonasikan %1$s¥! Pengetahuan kanji untuk semua orang!</item>
+        <item>Seseorang memasukkan %1$s¥ ke kotak donasi! ありがとう!</item>
+        <item>Seseorang berkontribusi %1$s¥! Membantu menyebarkan ilmu kanji lebih luas!</item>
+        <item>Pendukung setia mendonasikan %1$s¥! Menjaga dojo tetap terbuka untuk semua.</item>
+        <item>Berkat donasi %1$s¥, 勉強 Shiro! terus berkembang!</item>
+        <item>Donasi dermawan sebesar %1$s¥! Lebih banyak kanji gratis untuk semua!</item>
+        <item>Para pahlawan seperti Anda menjaga dojo ini gratis—terima kasih atas %1$s¥!</item>
+        <item>勉強 Shiro! membungkuk hormat atas kontribusi %1$s¥ Anda!</item>
+        <item>Kedermawanan seseorang menambahkan %1$s¥ ke dana pengembangan!</item>
+        <item>Seorang pembelajar rajin berkontribusi %1$s¥! Semoga latihan Anda selalu tepat.</item>
+    </string-array>
+
+    <string name="info_no_data_letter">Tidak ada data untuk karakter %1$s</string>
+    <string name="info_no_data_vocab">Tidak ada data untuk kosakata %1$s</string>
+    <string name="info_no_data_copy">Salin</string>
+    <string name="info_no_data_jisho">Cari di Jisho</string>
+
+</resources>

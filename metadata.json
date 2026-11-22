@@ -1,0 +1,6 @@
+{
+  "name": "勉強 Shiro!",
+  "description": "Japanese Kanji, Vocabulary, and Grammar learning app with SRS, writing practice, and Indonesian translations",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

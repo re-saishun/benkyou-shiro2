@@ -1,0 +1,13 @@
+{
+  "packs": [
+    {
+      "id": "n5-basic",
+      "title": "JLPT N5 Dasar",
+      "level": "N5",
+      "description": "Pola tata bahasa dasar N5",
+      "version": 1,
+      "url": "n5-basic.json",
+      "pointCount": 3
+    }
+  ]
+}

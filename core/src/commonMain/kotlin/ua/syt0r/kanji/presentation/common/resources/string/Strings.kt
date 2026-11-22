@@ -1,0 +1,688 @@
+package ua.syt0r.kanji.presentation.common.resources.string
+
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.compositionLocalOf
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.intl.Locale
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalDateTime
+import ua.syt0r.kanji.presentation.screen.main.screen.feedback.FeedbackScreen
+import kotlin.math.roundToInt
+import kotlin.time.Duration
+
+
+typealias StringResolveScope <T> = @Composable Strings.() -> T
+
+@Composable
+fun <T> resolveString(resolveScope: StringResolveScope<T>): T {
+    return LocalStrings.current.resolveScope()
+}
+
+fun getStrings(): Strings {
+    return when (Locale.current.language) {
+        "ja" -> JapaneseStrings
+        "in", "id" -> IndonesianStrings
+        else -> EnglishStrings
+    }
+}
+
+val LocalStrings = compositionLocalOf<Strings> { EnglishStrings }
+
+interface Strings {
+
+    val appName: String
+
+    val hiragana: String
+    val katakana: String
+
+    val kunyomi: String
+    val onyomi: String
+
+    val loading: String
+
+    val letterPracticeTypeWriting: String
+    val letterPracticeTypeReading: String
+    val letterPracticeTypeReadingPicker: String
+    val vocabPracticeTypeFlashcard: String
+    val vocabPracticeTypeReadingPicker: String
+    val vocabPracticeTypeWriting: String
+
+    val reviewStateDone: String
+    val reviewStateDue: String
+    val reviewStateNew: String
+
+    val home: HomeStrings
+    val memorize: MemorizeStrings
+    val grammar: GrammarStrings
+    val commonDashboard: CommonDashboardStrings
+    val stats: StatsStrings
+    val search: SearchStrings
+    val settings: SettingsStrings
+
+    val dailyLimit: DailyLimitStrings
+
+    val tutorialDialog: TutorialDialogStrings
+    val alternativeDialog: AlternativeDialogStrings
+
+    val reminderDialog: ReminderDialogStrings
+    val about: AboutStrings
+    val backup: BackupStrings
+    val feedback: FeedbackStrings
+    val sponsor: SponsorStrings
+    val account: AccountScreenStrings
+    val sync: SyncScreenStrings
+
+    val syncDialog: SyncDialogStrings
+    val syncSnackbar: SyncSnackbarStrings
+
+    val deckPicker: DeckPickerStrings
+    val deckDetails: DeckDetailsStrings
+    val deckEdit: DeckEditStrings
+
+    val commonPractice: CommonPracticeStrings
+    val letterPractice: LetterPracticeStrings
+    val vocabPractice: VocabPracticeStrings
+
+    val info: InfoScreenStrings
+
+    val urlPickerMessage: String
+    val urlPickerErrorMessage: String
+
+    val reminderNotification: ReminderNotificationStrings
+
+}
+
+interface AccountScreenStrings {
+    val title: String
+
+    val loggedOutMessage: String
+    val signInButton: String
+
+    val emailTitle: String
+    val subscriptionTitle: String
+    val subscriptionStatusInactive: String
+    val subscriptionStatusActive: String
+    val subscriptionStatusExpired: String
+    val subscriptionValidUntilTemplate: String
+    val signOutButton: String
+
+    val issueNoConnectionTitle: String
+    val issueNoConnectionMessage: String
+    val issueSessionExpiredTitle: String
+    val issueSessionExpiredMessage: String
+    val issueSubscriptionOutdatedTitle: String
+    val issueSubscriptionOutdatedMessage: String
+    val issueOtherTitle: String
+    val issueOtherMessageFallback: String
+}
+
+interface SyncScreenStrings {
+    val title: String
+
+    val guideTitle: String
+    val guideMessage: String
+    val guideStepAccountTitle: String
+    val guideStepAccountMessage: String
+    val guideStepSubscriptionTitle: String
+    val guideStepSubscriptionMessage: String
+
+    val accountErrorMessage: String
+
+    val statusTitle: String
+    val statusMessageLoading: String
+    val statusMessageDataDiffer: String
+    val statusMessageLocalNewer: String
+    val statusMessageUpToDate: String
+    val statusMessageError: String
+    val statusMessageUploading: String
+    val statusMessageDownloading: String
+    val statusMessageCanceled: String
+
+    val localDataTitle: String
+    val localDataIdTemplate: String
+    val localDataTimestampTemplate: String
+
+    val syncButton: String
+
+    val errorNoConnectionTitle: String
+    val errorNoConnectionMessage: String
+    val errorSessionExpiredTitle: String
+    val errorSessionExpiredMessage: String
+    val errorNoSubscriptionTitle: String
+    val errorNoSubscriptionMessage: String
+    val errorOtherTitle: String
+    val errorOtherMessageFallback: String
+
+}
+
+interface SyncDialogStrings {
+    val title: String
+    val buttonCancel: String
+    val buttonUpload: String
+    val buttonDownload: String
+    val buttonAccount: String
+    val uploadingMessage: String
+    val downloadingMessage: String
+    val conflictRemoteNewerTitle: String
+    val conflictRemoteNewerMessage: String
+    val conflictIncompatibleTitle: String
+    val conflictIncompatibleMessage: String
+    val errorNoNetworkTitle: String
+    val errorNoNetworkMessage: String
+    val errorNoSubscriptionTitle: String
+    val errorNoSubscriptionMessage: String
+    val errorNotAuthenticatedTitle: String
+    val errorNotAuthenticatedMessage: String
+    val errorUnexpectedErrorTitle: String
+    val errorUnexpectedErrorMessage: String
+    val errorUnsupportedDataTitle: String
+    val errorUnsupportedDataMessage: String
+}
+
+interface SyncSnackbarStrings {
+    val errorNoConnection: String
+    val errorNoSubscription: String
+    val errorNotAuthenticated: String
+    val errorDataNotSupported: String
+    val errorMessageTemplate: String
+    val errorMessageNoReason: String
+    val actionButton: String
+}
+
+interface TutorialDialogStrings {
+    val title: String
+    val page1: String
+    val page2Top: String
+    val page2Bottom: String
+    val page3Top: String
+    val page3Bottom: String
+    val page4Top: String
+    val page4Bottom: String
+    val page5: String
+}
+
+interface SponsorStrings {
+    val message: String
+}
+
+interface FeedbackStrings {
+    val title: String
+    val topicTitle: String
+    val topicGeneral: String
+    val topicExpression: (id: Long, screen: FeedbackScreen) -> String
+    val messageLabel: String
+    val messageSupportingText: (messageLength: Int, maxLength: Int) -> String
+        get() = { messageLength, maxLength -> "$messageLength/$maxLength" }
+    val button: String
+    val successMessage: String
+    val errorMessage: (String?) -> String
+}
+
+interface HomeStrings {
+    val screenTitle: String
+
+    val generalDashboardTabLabel: String
+    val grammarDashboardTabLabel: String
+    val memorizeDashboardTabLabel: String
+    val lettersDashboardTabLabel: String
+    val vocabDashboardTabLabel: String
+    val statsTabLabel: String
+    val searchTabLabel: String
+    val settingsTabLabel: String
+}
+
+interface MemorizeStrings {
+    val screenTitle: String
+    val lettersTitle: String
+    val lettersSubtitle: String
+    val vocabTitle: String
+    val vocabSubtitle: String
+    val decksCountLabel: (Int) -> String
+    val dueCountLabel: (Int) -> String
+    val newCountLabel: (Int) -> String
+}
+
+interface GrammarStrings {
+    val practiceTypeRead: String
+    val practiceTypeQuiz: String
+    val practiceTypeTest: String
+    val emptyTitle: String
+    val emptyMessage: String
+    val addPackButton: String
+    val catalogDialogTitle: String
+    val catalogUrlLabel: String
+    val catalogCheckButton: String
+    val catalogCreateLocalButton: String
+    val catalogLocalTitleHint: String
+    val catalogLoading: String
+    val catalogRetry: String
+    val catalogStatusDownloaded: String
+    val catalogStatusUpdateAvailable: String
+    val catalogStatusNotDownloaded: String
+    val catalogDownloadButton: String
+    val catalogUpdateButton: String
+    val catalogPointCount: (Int) -> String
+    val deleteDeckDialogTitle: String
+    val deleteDeckDialogMessage: (String) -> String
+    val deleteDeckButton: String
+    val practiceMeaningLabel: String
+    val practiceStructureLabel: String
+    val practiceNuanceLabel: String
+    val practiceExamplesLabel: String
+    val practiceShowAnswerButton: String
+    val practiceNextButton: String
+    val practiceTestInputHint: String
+    val practiceTestCheckButton: String
+    val practiceCorrectAnswerLabel: String
+    val practiceIncorrectAnswerLabel: String
+    val practiceEmptyQueue: String
+    val closeButton: String
+}
+
+interface CommonDashboardStrings {
+
+    val emptyScreenMessage: (inlineIconId: String) -> AnnotatedString
+
+    val mergeButton: String
+    val mergeCancelButton: String
+    val mergeAcceptButton: String
+    val mergeTitle: String
+    val mergeTitleHint: String
+    val mergeSelectedCount: (Int) -> String
+    val mergeClearSelectionButton: String
+
+    val mergeDialogTitle: String
+    val mergeDialogMessage: (newTitle: String, mergedTitles: List<String>) -> String
+    val mergeDialogCancelButton: String
+    val mergeDialogAcceptButton: String
+
+    val sortButton: String
+    val sortCancelButton: String
+    val sortAcceptButton: String
+    val sortTitle: String
+    val sortByTimeTitle: String
+
+    val itemTimeMessage: (reviewToNowDuration: Duration?) -> String
+    val itemTotal: String
+    val itemDone: String
+    val itemReview: String
+    val itemNew: String
+    val dailyPracticeTitle: String
+    val dailyPracticeNew: (Int) -> String
+    val dailyPracticeDue: (Int) -> String
+    val itemGraphProgressTitle: String
+    val itemGraphProgressValue: (Float) -> String
+        get() = { " ${it.roundToInt()}%" }
+
+    val selectedPracticeTypeTemplate: (practiceType: String) -> String
+
+}
+
+interface DailyLimitStrings {
+    val enableSwitchTitle: String
+    val enableSwitchDescription: String
+    val lettersSectionTitle: String
+    val vocabSectionTitle: String
+    val grammarSectionTitle: String
+    val combinedLimitSwitchTitle: String
+    val combinedLimitSwitchDescription: String
+    val newLabel: String
+    val dueLabel: String
+    val noteMessage: String
+    val button: String
+    val changesSavedMessage: String
+}
+
+interface StatsStrings {
+    val todayTitle: String
+    val monthTitle: String
+    val monthLabel: (day: LocalDate) -> String
+    val yearTitle: String
+    val yearDaysPracticedLabel: (practicedDays: Int, daysInYear: Int) -> String
+    val totalTitle: String
+    val newItemsTitle: String
+    val timeSpentTitle: String
+    val reviewsCountTitle: String
+    val formattedDuration: (Duration) -> String
+    val uniqueLettersReviewed: String
+    val uniqueWordsReviewed: String
+}
+
+interface SearchStrings {
+    val inputHint: String
+    val charactersTitle: (count: Int) -> String
+    val wordsTitle: (count: Int) -> String
+    val radicalsSheetTitle: String
+    val radicalsFoundCharacters: String
+    val radicalsEmptyFoundCharacters: String
+    val radicalSheetRadicalsSectionTitle: String
+}
+
+interface AlternativeDialogStrings {
+    val title: String
+    val readingsTitle: String
+    val meaningsTitle: String
+    val reportButton: String
+    val closeButton: String
+}
+
+interface SettingsStrings {
+    val analyticsTitle: String
+    val analyticsMessage: String
+
+    val themeTitle: String
+    val themeSystem: String
+    val themeLight: String
+    val themeDark: String
+    val themeAmoled: String
+
+    val reminderTitle: String
+    val reminderEnabled: String
+    val reminderDisabled: String
+    val defaultTab: String
+    val contentLanguageTitle: String
+    val contentLanguageEnglish: String
+    val contentLanguageIndonesian: String
+    val feedbackTitle: String
+    val account: String
+    val sync: String
+    val backupTitle: String
+    val donateTitle: String
+    val aboutTitle: String
+
+    val pickerDialogCancel: String
+    val pickerDialogApply: String
+}
+
+interface ReminderDialogStrings {
+    val title: String
+    val noPermissionLabel: String
+    val noPermissionButton: String
+    val enabledLabel: String
+    val timeLabel: String
+    val cancelButton: String
+    val applyButton: String
+}
+
+interface AboutStrings {
+    val title: String
+    val version: (versionName: String) -> String
+    val githubTitle: String
+    val githubDescription: String
+    val versionChangesTitle: String
+    val versionChangesDescription: String
+    val versionChangesButton: String
+    val creditsTitle: String
+    val creditsDescription: String
+}
+
+
+interface BackupStrings {
+    val title: String
+    val backupButton: String
+    val restoreButton: String
+    val unknownError: String
+    val restoreVersionMessage: (backupVersion: Long, currentVersion: Long) -> String
+    val restoreTimeMessage: (LocalDateTime) -> String
+    val restoreNote: String
+    val restoreApplyButton: String
+    val completeMessage: String
+}
+
+interface DeckPickerStrings {
+
+    val title: String
+
+    val customDeckButton: String
+    val kanaTitle: String
+    val kanaDescription: (urlColor: Color) -> AnnotatedString
+    val hiragana: String
+    val katakana: String
+
+    val jltpTitle: String
+    val jlptDescription: StringResolveScope<AnnotatedString>
+    val jlptItem: (level: Int) -> String
+
+    val gradeTitle: String
+    val gradeDescription: (urlColor: Color) -> AnnotatedString
+
+    fun getGradeItem(grade: Int): String {
+        return when {
+            grade <= 6 -> gradeItemNumbered(grade)
+            grade == 8 -> gradeItemSecondary
+            grade == 9 -> gradeItemNames
+            grade == 10 -> gradeItemNamesVariants
+            else -> throw IllegalStateException("Unexpected grade $grade")
+        }
+    }
+
+    val gradeItemNumbered: (Int) -> String
+    val gradeItemSecondary: String
+    val gradeItemNames: String
+    val gradeItemNamesVariants: String
+
+    val wanikaniTitle: String
+    val wanikaniDescription: (urlColor: Color) -> AnnotatedString
+    val wanikaniItem: (Int) -> String
+
+    val vocabDeckItemWordsCountLabel: (words: Int) -> String
+
+    val vocabOtherTitle: String
+    val vocabOtherDescription: AnnotatedString
+    val vocabDeckTitleTime: String
+    val vocabDeckTitleWeek: String
+    val vocabDeckTitleCommonVerbs: String
+    val vocabDeckTitleColors: String
+    val vocabDeckTitleRegularFood: String
+    val vocabDeckTitleJapaneseFood: String
+    val vocabDeckTitleGrammarTerms: String
+    val vocabDeckTitleAnimals: String
+    val vocabDeckTitleBody: String
+    val vocabDeckTitleCommonPlaces: String
+    val vocabDeckTitleCities: String
+    val vocabDeckTitleTransport: String
+
+}
+
+interface DeckEditStrings {
+    val createTitle: String
+    val ediTitle: String
+
+    val searchHint: String
+
+    val editingModeSearchTitle: String
+    val editingModeRemovalTitle: String
+
+    val editingModeDetailsTitle: String
+    val vocabDetailsEmptyMessage: (inlineIconId: String) -> AnnotatedString
+
+    val completeMessage: String
+
+    val saveTitle: String
+    val saveInputHint: String
+    val saveButtonDefault: String
+    val saveButtonCompleted: String
+
+    val deleteTitle: String
+    val deleteMessage: (deckTitle: String) -> String
+    val deleteButtonDefault: String
+    val deleteButtonCompleted: String
+
+    val unknownTitle: String
+    val unknownMessage: (characters: List<String>) -> String
+    val unknownButton: String
+
+    val leaveConfirmationTitle: String
+    val leaveConfirmationMessage: String
+    val leaveConfirmationCancel: String
+    val leaveConfirmationAccept: String
+}
+
+interface DeckDetailsStrings {
+
+    val emptyListMessage: String
+    fun listGroupTitle(index: Int, characters: String): String = "$index. $characters"
+
+    val detailsGroupTitle: (index: Int) -> String
+
+    val firstTimeReviewMessage: (LocalDateTime?) -> String
+    val lastTimeReviewMessage: (LocalDateTime?) -> String
+
+    val groupDetailsDateTimeFormatter: (LocalDateTime) -> String
+        get() = {
+            it.run { "${dayOfMonth.withLeading0}/${monthNumber.withLeading0}/$year ${hour.withLeading0}:${minute.withLeading0}" }
+        }
+    val groupDetailsButton: String
+
+    val expectedReviewDate: (LocalDate?) -> String
+    val lastReviewDate: (LocalDateTime?) -> String
+    val repetitions: (Int) -> String
+    val lapses: (Int) -> String
+
+    val multiselectTitle: (selectedCount: Int) -> String
+    val multiselectDataNotLoaded: String
+    val multiselectNoSelected: String
+
+    val filterAllLabel: String
+    val filterNoneLabel: String
+    val kanaGroupsModeActivatedLabel: String
+
+    val dialogCommon: LetterDeckDetailDialogCommonStrings
+    val filterDialog: FilterDialogStrings
+    val sortDialog: SortDialogStrings
+    val layoutDialog: PracticePreviewLayoutDialogStrings
+
+    val shareLetterDeckClipboardMessage: String
+
+}
+
+interface FilterDialogStrings {
+    val title: String
+}
+
+interface SortDialogStrings {
+    val title: String
+
+    val sortOptionAddOrder: String
+    val sortOptionAddOrderHint: String
+    val sortOptionFrequency: String
+    val sortOptionFrequencyHint: String
+    val sortOptionName: String
+    val sortOptionNameHint: String
+    val sortOptionReviewTime: String
+    val sortOptionReviewTimeHint: String
+}
+
+interface PracticePreviewLayoutDialogStrings {
+    val title: String
+    val singleCharacterOptionLabel: String
+    val groupsOptionLabel: String
+    val kanaGroupsTitle: String
+    val kanaGroupsSubtitle: String
+}
+
+interface LetterDeckDetailDialogCommonStrings {
+    val buttonCancel: String
+    val buttonApply: String
+}
+
+interface CommonPracticeStrings {
+    val configurationTitle: String
+    val configurationSelectedItemsLabel: String
+    val configurationCharactersPreview: String
+    val shuffleConfigurationTitle: String
+    val shuffleConfigurationMessage: String
+    val configurationCompleteButton: String
+
+    val additionalKanaReadingsNote: (List<String>) -> String
+
+    val formattedSrsInterval: (Duration) -> String
+    val flashcardRevealButton: String
+    val againButton: String
+    val hardButton: String
+    val goodButton: String
+    val easyButton: String
+
+    val summaryTimeSpentValue: (Duration) -> String
+
+    val earlyFinishDialogTitle: String
+    val earlyFinishDialogMessage: String
+    val earlyFinishDialogCancelButton: String
+    val earlyFinishDialogAcceptButton: String
+}
+
+interface LetterPracticeStrings {
+    val configurationTitle: (practiceType: String) -> String
+    val hintStrokesTitle: String
+    val hintStrokesMessage: String
+    val hintStrokeNewOnlyMode: String
+    val hintStrokeAllMode: String
+    val hintStrokeNoneMode: String
+    val inputModeTitle: String
+    val inputModeMessage: String
+    val inputModeStroke: String
+    val inputModeCharacter: String
+    val kanaRomajiTitle: String
+    val kanaRomajiMessage: String
+    val noTranslationLayoutTitle: String
+    val noTranslationLayoutMessage: String
+    val leftHandedModeTitle: String
+    val leftHandedModeMessage: String
+
+    val headerWordsMessage: (count: Int) -> String
+    val studyFinishedButton: String
+    val noKanjiTranslationsLabel: String
+
+    val altStrokeEvaluatorTitle: String
+    val altStrokeEvaluatorMessage: String
+
+    val variantsTitle: String
+    val variantsHint: String
+    val unicodeTitle: (hexRepresentation: String) -> String
+    val strokeCountTitle: (Int) -> String
+}
+
+interface VocabPracticeStrings {
+    val configurationTitle: (practiceType: String) -> String
+
+    val readingMeaningConfigurationTitle: String
+    val readingMeaningConfigurationMessage: String
+
+    val translationInFrontConfigurationTitle: String
+    val translationInFrontConfigurationMessage: String
+
+    val writingKanaReadingConfigurationTitle: String
+    val writingKanaReadingConfigurationMessage: String
+    val writingWordsPreviewTitle: String
+    val writingHintStrokesMessage: String
+    val writingInputModeMessage: String
+    val writingNoTranslationLayoutMessage: String
+    val writingKanjiInfoTitle: String
+    val writingCharacterDetailsButton: String
+
+    val detailsButton: String
+
+}
+
+interface InfoScreenStrings {
+    val strokesMessage: (count: Int) -> AnnotatedString
+    val clipboardCopyMessage: String
+    val radicalsSectionTitle: (count: Int) -> String
+    val noRadicalsMessage: String
+    val wordsSectionTitle: (count: Int) -> String
+    val romajiMessage: (romaji: List<String>) -> String
+    val gradeMessage: (grade: Int) -> String
+    val jlptMessage: (level: Int) -> String
+    val frequencyMessage: (frequency: Int) -> String
+}
+
+interface ReminderNotificationStrings {
+    val channelName: String
+    val title: String
+    val noDetailsMessage: String
+    val newOnlyMessage: (Int) -> String
+    val dueOnlyMessage: (Int) -> String
+    val message: (Int, Int) -> String
+}
+
