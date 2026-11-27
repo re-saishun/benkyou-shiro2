@@ -96,6 +96,12 @@ android {
         includeInApk = false
     }
 
+    testOptions {
+        unitTests {
+            isIncludeAndroidResources = true
+        }
+    }
+
 }
 
 androidComponents {
@@ -121,6 +127,10 @@ dependencies {
     "googlePlayImplementation"(libs.firebase.crashlytics)
     "googlePlayImplementation"(libs.billing.ktx)
     "googlePlayImplementation"(libs.review.ktx)
+
+    testImplementation("junit:junit:4.13.2")
+    testImplementation("org.robolectric:robolectric:4.14.1")
+    testImplementation("androidx.test:core:1.6.1")
 }
 
 secrets {
