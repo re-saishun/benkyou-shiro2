@@ -71,7 +71,8 @@ fun Module.applySrsDefinitions() {
         DefaultGrammarCatalogService(
             networkClients = get(),
             repository = get(),
-            appPreferences = get()
+            appPreferences = get(),
+            appSecretsConfig = get()
         )
     }
 

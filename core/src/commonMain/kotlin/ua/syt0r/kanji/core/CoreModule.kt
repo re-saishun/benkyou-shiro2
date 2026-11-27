@@ -22,6 +22,8 @@ import ua.syt0r.kanji.core.japanese.DefaultCharacterClassifier
 import ua.syt0r.kanji.core.srs.applySrsDefinitions
 import ua.syt0r.kanji.core.streak.DailyStreakTracker
 import ua.syt0r.kanji.core.streak.DefaultDailyStreakTracker
+import ua.syt0r.kanji.core.supabase.DefaultSupabaseService
+import ua.syt0r.kanji.core.supabase.SupabaseService
 import ua.syt0r.kanji.core.sync.addSyncDefinitions
 import ua.syt0r.kanji.core.theme_manager.ThemeManager
 import ua.syt0r.kanji.core.time.DefaultTimeUtils
@@ -136,6 +138,20 @@ val coreModule = module {
         VocabCardResolver(
             vocabPracticeRepository = get(),
             appDataRepository = get()
+        )
+    }
+
+    single<SupabaseService> {
+        DefaultSupabaseService(
+            appSecretsConfig = get(),
+            appPreferences = get(),
+            networkClients = get(),
+            googleSignInBridge = get(),
+            backupManager = get(),
+            syncBackupFileProvider = get(),
+            platformFileHandler = get(),
+            applyRemoteSyncDataUseCase = get(),
+            timeUtils = get()
         )
     }
 

@@ -12,10 +12,11 @@ val mainScreenModule = module {
             appPreferences = get(),
             accountManager = get(),
             migrationObservable = get(),
-            syncManager = get()
+            syncManager = get(),
+            dailyStreakTracker = get()
         )
     }
 
-    single { DeepLinkHandler() }
+    single { DeepLinkHandler(supabaseService = get()) }
 
 }

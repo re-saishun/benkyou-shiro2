@@ -9,11 +9,13 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.collectLatest
 import ua.syt0r.kanji.core.launchWhenHasSubscribers
 import ua.syt0r.kanji.core.logger.Logger
+import ua.syt0r.kanji.core.supabase.SupabaseService
 import ua.syt0r.kanji.presentation.screen.main.MainDestination
 import ua.syt0r.kanji.presentation.screen.main.MainNavigationState
 import ua.syt0r.kanji.presentation.screen.main.screen.account.AccountScreenContract
 
 class DeepLinkHandler(
+    private val supabaseService: SupabaseService,
     private val coroutineScope: CoroutineScope = CoroutineScope(Dispatchers.Unconfined)
 ) {
 
@@ -37,6 +39,11 @@ class DeepLinkHandler(
                             Logger.d("Couldn't parse deep link $it")
                             null
                         }
+                    }
+
+                    it.startsWith(SupabaseService.REDIRECT_URI) -> {
+                        supabaseService.handleAuthDeepLink(it)
+                        MainDestination.Account()
                     }
 
                     else -> {

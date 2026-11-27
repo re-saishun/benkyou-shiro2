@@ -8,11 +8,13 @@ import androidx.compose.animation.core.snap
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.text.selection.LocalTextSelectionColors
 import androidx.compose.foundation.text.selection.TextSelectionColors
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.ListItemColors
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
@@ -24,6 +26,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
+import ua.syt0r.kanji.core.user_data.preferences.PreferencesThemePalette
 import ua.syt0r.kanji.presentation.common.resources.string.LocalStrings
 import ua.syt0r.kanji.presentation.common.resources.string.getStrings
 import ua.syt0r.kanji.presentation.common.ui.LocalOrientation
@@ -128,26 +132,140 @@ val MaterialTheme.extraColorScheme: ExtraColorsScheme
     @Composable
     get() = LocalExtraColors.current
 
+val LocalAppThemeTokens = compositionLocalOf { shuLightThemeTokens }
+
+val MaterialTheme.appColors: AppThemeTokens
+    @Composable
+    get() = LocalAppThemeTokens.current
+
+@Composable
+fun appCardBorder(): BorderStroke? {
+    val tokens = MaterialTheme.appColors
+    return if (tokens.useCardBorder) BorderStroke(0.5.dp, tokens.progressTrack) else null
+}
+
+fun PreferencesThemePalette.resolveTokens(
+    useDarkTheme: Boolean,
+    useAmoledTheme: Boolean = false
+): AppThemeTokens = when (this) {
+    PreferencesThemePalette.Shu -> when {
+        useAmoledTheme -> shuDarkThemeTokens.copy(background = amoled_theme_background)
+        useDarkTheme -> shuDarkThemeTokens
+        else -> shuLightThemeTokens
+    }
+
+    PreferencesThemePalette.Sumi -> if (useDarkTheme) sumiDarkThemeTokens else sumiLightThemeTokens
+    PreferencesThemePalette.Matcha -> if (useDarkTheme) matchaDarkThemeTokens else matchaLightThemeTokens
+    PreferencesThemePalette.Sakura -> if (useDarkTheme) sakuraDarkThemeTokens else sakuraLightThemeTokens
+    PreferencesThemePalette.Ai -> if (useDarkTheme) aiDarkThemeTokens else aiLightThemeTokens
+    PreferencesThemePalette.Suna -> if (useDarkTheme) sunaDarkThemeTokens else sunaLightThemeTokens
+}
+
+private fun AppThemeTokens.toMinimalistColorScheme(): ColorScheme {
+    return if (isLight) {
+        lightColorScheme(
+            primary = accent,
+            onPrimary = onAccent,
+            primaryContainer = accent,
+            onPrimaryContainer = onAccent,
+            secondary = accent,
+            onSecondary = onAccent,
+            secondaryContainer = progressTrack,
+            onSecondaryContainer = textPrimary,
+            tertiary = accent,
+            onTertiary = onAccent,
+            tertiaryContainer = card,
+            onTertiaryContainer = textPrimary,
+            error = md_theme_light_error,
+            errorContainer = md_theme_light_errorContainer,
+            onError = md_theme_light_onError,
+            onErrorContainer = md_theme_light_onErrorContainer,
+            background = background,
+            onBackground = textPrimary,
+            surface = background,
+            onSurface = textPrimary,
+            surfaceVariant = progressTrack,
+            onSurfaceVariant = textMuted,
+            surfaceContainerLowest = background,
+            surfaceContainerLow = card,
+            surfaceContainer = card,
+            surfaceContainerHigh = card,
+            surfaceContainerHighest = card,
+            surfaceDim = progressTrack,
+            outline = textMuted,
+            outlineVariant = progressTrack,
+            inverseSurface = textPrimary,
+            inverseOnSurface = background,
+            inversePrimary = accent
+        )
+    } else {
+        darkColorScheme(
+            primary = accent,
+            onPrimary = onAccent,
+            primaryContainer = accent,
+            onPrimaryContainer = onAccent,
+            secondary = accent,
+            onSecondary = onAccent,
+            secondaryContainer = progressTrack,
+            onSecondaryContainer = textPrimary,
+            tertiary = accent,
+            onTertiary = onAccent,
+            tertiaryContainer = card,
+            onTertiaryContainer = textPrimary,
+            error = md_theme_dark_error,
+            errorContainer = md_theme_dark_errorContainer,
+            onError = md_theme_dark_onError,
+            onErrorContainer = md_theme_dark_onErrorContainer,
+            background = background,
+            onBackground = textPrimary,
+            surface = background,
+            onSurface = textPrimary,
+            surfaceVariant = progressTrack,
+            onSurfaceVariant = textMuted,
+            surfaceContainerLowest = background,
+            surfaceContainerLow = card,
+            surfaceContainer = card,
+            surfaceContainerHigh = card,
+            surfaceContainerHighest = card,
+            surfaceDim = card,
+            outline = textMuted,
+            outlineVariant = progressTrack,
+            inverseSurface = textPrimary,
+            inverseOnSurface = background,
+            inversePrimary = accent
+        )
+    }
+}
+
 @Composable
 fun AppTheme(
     useDarkTheme: Boolean = isSystemInDarkTheme(),
     useAmoledTheme: Boolean = false,
+    palette: PreferencesThemePalette = PreferencesThemePalette.Shu,
     orientation: Orientation = Orientation.Portrait,
     content: @Composable () -> Unit
 ) {
-    val (colors, extraColors) = if (useAmoledTheme) {
-        AmoledThemeColors to DarkExtraColorScheme
-    } else if (!useDarkTheme) {
-        LightThemeColors to LightExtraColorScheme
-    } else {
-        DarkThemeColors to DarkExtraColorScheme
+    val isDark = useDarkTheme || useAmoledTheme
+    val appTokens = palette.resolveTokens(useDarkTheme = isDark, useAmoledTheme = useAmoledTheme)
+
+    val colors = when (palette) {
+        PreferencesThemePalette.Shu -> when {
+            useAmoledTheme -> AmoledThemeColors
+            useDarkTheme -> DarkThemeColors
+            else -> LightThemeColors
+        }
+
+        else -> appTokens.toMinimalistColorScheme()
     }
+
+    val extraColors = if (isDark) DarkExtraColorScheme else LightExtraColorScheme
 
     MaterialTheme(
         colorScheme = colors,
         typography = AppTypography,
         content = {
             CompositionLocalProvider(
+                LocalAppThemeTokens provides appTokens,
                 LocalExtraColors provides extraColors,
                 LocalOrientation provides orientation,
                 LocalStrings provides getStrings(),

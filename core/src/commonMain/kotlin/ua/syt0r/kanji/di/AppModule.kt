@@ -16,6 +16,7 @@ import ua.syt0r.kanji.presentation.screen.main.screen.home.screen.grammar_dashbo
 import ua.syt0r.kanji.presentation.screen.main.screen.home.screen.letters_dashboard.lettersDashboardScreenModule
 import ua.syt0r.kanji.presentation.screen.main.screen.home.screen.search.searchScreenModule
 import ua.syt0r.kanji.presentation.screen.main.screen.home.screen.settings.settingsScreenModule
+import ua.syt0r.kanji.presentation.screen.main.screen.home.screen.speak.speakScreenModule
 import ua.syt0r.kanji.presentation.screen.main.screen.home.screen.stats.statsScreenModule
 import ua.syt0r.kanji.presentation.screen.main.screen.home.screen.vocab_dashboard.vocabDashboardScreenModule
 import ua.syt0r.kanji.presentation.screen.main.screen.info.infoScreenModule
@@ -36,6 +37,7 @@ private val screenModules = listOf(
     grammarDashboardScreenModule,
     statsScreenModule,
     searchScreenModule,
+    speakScreenModule,
     settingsScreenModule,
     aboutScreenModule,
     deckPickerScreenModule,

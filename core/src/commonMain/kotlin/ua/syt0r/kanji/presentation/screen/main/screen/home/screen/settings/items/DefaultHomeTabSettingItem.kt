@@ -35,7 +35,8 @@ enum class DisplayableDefaultHomeTab(
 
     GeneralDashboard(PreferencesDefaultHomeTab.GeneralDashboard, { home.generalDashboardTabLabel }),
     Grammar(PreferencesDefaultHomeTab.Grammar, { home.grammarDashboardTabLabel }),
-    Memorize(PreferencesDefaultHomeTab.Memorize, { home.memorizeDashboardTabLabel });
+    Memorize(PreferencesDefaultHomeTab.Memorize, { home.memorizeDashboardTabLabel }),
+    Speak(PreferencesDefaultHomeTab.Speak, { home.speakTabLabel });
 
     companion object {
         fun from(prefType: PreferencesDefaultHomeTab): DisplayableDefaultHomeTab =

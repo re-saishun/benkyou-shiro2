@@ -70,6 +70,8 @@ object IndonesianStrings : Strings {
     override val letterPractice: LetterPracticeStrings = IndonesianLetterPracticeStrings
     override val vocabPractice: VocabPracticeStrings = IndonesianVocabPracticeStrings
     override val info: InfoScreenStrings = IndonesianInfoScreenStrings
+    override val speak: SpeakStrings = IndonesianSpeakStrings
+    override val dailyStreak: DailyStreakStrings = IndonesianDailyStreakStrings
 
     override val urlPickerMessage: String = "Buka Dengan"
     override val urlPickerErrorMessage: String = "Peramban web tidak ditemukan"
@@ -84,6 +86,7 @@ object IndonesianHomeStrings : HomeStrings {
     override val generalDashboardTabLabel: String = "Beranda"
     override val grammarDashboardTabLabel: String = "Tata Bahasa"
     override val memorizeDashboardTabLabel: String = "Hafalan"
+    override val speakTabLabel: String = "Bicara"
     override val lettersDashboardTabLabel: String = "Karakter"
     override val vocabDashboardTabLabel: String = "Kosakata"
     override val statsTabLabel: String = "Statistik"
@@ -305,10 +308,17 @@ object IndonesianSettingsStrings : SettingsStrings {
     override val analyticsTitle: String = "Analitik"
     override val analyticsMessage: String = "Izinkan pengiriman data anonim penggunaan aplikasi"
     override val themeTitle: String = "Tema"
+    override val themeModeTitle: String = "Tampilan"
     override val themeSystem: String = "Sistem"
     override val themeLight: String = "Terang"
     override val themeDark: String = "Gelap"
     override val themeAmoled: String = "AMOLED"
+    override val themePaletteShu: String = "Shu"
+    override val themePaletteSumi: String = "Sumi"
+    override val themePaletteMatcha: String = "Matcha"
+    override val themePaletteSakura: String = "Sakura"
+    override val themePaletteAi: String = "Ai"
+    override val themePaletteSuna: String = "Suna"
     override val reminderTitle: String = "Pengingat Latihan"
     override val reminderEnabled: String = "Aktif"
     override val reminderDisabled: String = "Nonaktif"
@@ -322,6 +332,11 @@ object IndonesianSettingsStrings : SettingsStrings {
     override val backupTitle: String = "Cadangkan & Pulihkan"
     override val donateTitle: String = "Donasi"
     override val aboutTitle: String = "Tentang"
+    override val accountSectionDescription: String = "Akun, cadangkan & pulihkan, sinkronisasi cloud"
+    override val tutorialDescription: String = "Panduan singkat mode belajar dan SRS"
+    override val systemTitle: String = "Sistem"
+    override val systemDescription: String = "Tema, pengingat, bahasa, tab default, reset harian"
+    override val aboutDescription: String = "Info aplikasi, fork Kanji Dojo, GitHub, masukan, donasi"
     override val pickerDialogCancel: String = "Batal"
     override val pickerDialogApply: String = "Terapkan"
 }
@@ -338,12 +353,25 @@ object IndonesianReminderDialogStrings : ReminderDialogStrings {
 
 object IndonesianAboutStrings : AboutStrings {
     override val title: String = "Tentang"
+    override val appSubtitle: String = "Aplikasi belajar kanji, tata bahasa, kosakata & percakapan AI"
     override val version: (versionName: String) -> String = { "Versi: $it" }
+    override val forkAttributionTitle: String = "Fork dari Kanji Dojo"
+    override val forkAttributionDescription: String = "Dikembangkan dari proyek sumber terbuka Kanji Dojo"
+    override val githubTitle: String = "GitHub"
+    override val githubDescription: String = "Kode sumber, laporan bug, diskusi"
+    override val kanjiDojoGithubTitle: String = "Kanji Dojo (GitHub Asli)"
+    override val kanjiDojoGithubDescription: String = "Repositori sumber terbuka asli oleh syt0r"
+    override val socialTitle: String = "Sosial"
+    override val socialDescription: String = "Komunitas Discord & pembaruan YouTube"
+    override val downloadsTitle: String = "Unduhan"
+    override val downloadsDescription: String = "Rilis resmi dan versi platform"
+    override val feedbackTitle: String = "Masukan & Saran"
+    override val feedbackDescription: String = "Kirim laporan bug atau saran fitur"
+    override val donateTitle: String = "Donasi"
+    override val donateDescription: String = "Dukung pengembangan berkelanjutan"
     override val versionChangesTitle: String = "Catatan Rilis"
     override val versionChangesDescription: String = "Riwayat pembaruan aplikasi"
     override val versionChangesButton: String = "Tutup"
-    override val githubTitle: String = "GitHub"
-    override val githubDescription: String = "Kode sumber, laporan bug, diskusi"
     override val creditsTitle: String = "Kredit & Sumber Data"
     override val creditsDescription: String = "Pustaka dan sumber data yang digunakan"
 }
@@ -755,6 +783,57 @@ object IndonesianAccountScreenStrings : AccountScreenStrings {
     override val issueSubscriptionOutdatedMessage = "Klik untuk memuat ulang"
     override val issueOtherTitle = "Kesalahan"
     override val issueOtherMessageFallback = "Kesalahan tidak diketahui"
+
+    override val supabaseSectionTitle = "Akun Cloud (Supabase)"
+    override val supabaseSectionDescription = "Masuk dengan Google untuk mencadangkan dan memulihkan progres belajar Anda ke Supabase"
+    override val continueWithGoogleSupabase = "Lanjutkan dengan Google"
+    override val supabaseSignedInLabel = "Masuk dengan Google"
+    override val supabaseUploadBackupButton = "Unggah Cadangan ke Supabase"
+    override val supabaseRestoreBackupButton = "Pulihkan Cadangan dari Supabase"
+    override val supabaseLastSyncTemplate = "Terakhir sinkron: %s"
+    override val supabaseNotConfiguredHint = "Tambahkan SUPABASE_URL dan SUPABASE_ANON_KEY di AI Studio Secrets untuk mengaktifkan login cloud."
+    override val legacyMigrationPrompt = "Migrasi dari akun Kanji Dojo lama? Masuk ke akun lama"
+    override val legacyMigrationBannerTitle = "Akun Lama Terhubung"
+    override val legacyMigrationPullAndSyncButton = "Tarik Data Cloud Lama & Sinkronkan ke Supabase"
+    override val legacySignOutButton = "Keluar dari Akun Lama"
+}
+
+object IndonesianSpeakStrings : SpeakStrings {
+    override val title = "Bicara"
+    override val subtitle = "Latihan percakapan suara bahasa Jepang langsung dengan AI"
+    override val micPermissionNeededTitle = "Izin mikrofon diperlukan"
+    override val micPermissionNeededMessage = "Izinkan perekaman mikrofon agar Anda dapat berbicara langsung dengan tutor AI saat panggilan berlangsung."
+    override val grantMicPermissionButton = "Izinkan Mikrofon"
+    override val startCallButton = "Mulai Panggilan Suara Live"
+    override val connectingLabel = "Menghubungkan audio langsung..."
+    override val liveStatusLabel = "Panggilan Aktif"
+    override val endCallButton = "Akhiri Panggilan"
+    override val muteMicButton = "Bisukan Mik"
+    override val unmuteMicButton = "Aktifkan Mik"
+    override val topicSectionTitle = "Topik Percakapan"
+    override val topicFreeTalk = "Bebas"
+    override val topicCafeOrder = "Pesan Kafe"
+    override val topicConvenienceStore = "Minimarket"
+    override val topicStationTravel = "Stasiun & Travel"
+    override val topicSelfIntro = "Perkenalan"
+    override val topicCustom = "Kustom"
+    override val levelSectionTitle = "Tingkat"
+    override val customPromptLabel = "Skenario atau roleplay khusus"
+    override val customPromptPlaceholder = "Contoh: Latihan memesan ramen di restoran"
+    override val starterPhrasesTitle = "Frasa Pembuka"
+    override val liveCallTips = "Berbicaralah secara alami dalam bahasa Jepang. Tutor AI menyesuaikan level JLPT Anda dan membantu mengoreksi dengan ramah."
+    override val unsupportedMessage = "Panggilan suara langsung hanya didukung pada perangkat Android dengan Firebase AI Logic."
+}
+
+object IndonesianDailyStreakStrings : DailyStreakStrings {
+    override val currentLabel = "Saat Ini"
+    override val bestLabel = "Terbaik"
+    override val totalDaysLabel = "Total Hari"
+    override val statusCompleted = "Selesai Hari Ini"
+    override val statusAtRisk = "Perlu Latihan"
+    override val statusExpired = "Berakhir"
+    override val statusStart = "Siap"
+    override val daysUnit: (Int) -> String = { "$it hari" }
 }
 
 object IndonesianSyncScreenStrings : SyncScreenStrings {

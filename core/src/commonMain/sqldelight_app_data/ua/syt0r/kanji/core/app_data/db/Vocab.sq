@@ -251,13 +251,35 @@ WITH
              FROM vocab_kana_element
              WHERE reading LIKE '%' || :text || '%'),
     combined AS (SELECT * FROM kanji UNION ALL SELECT * FROM kana),
-    grouped AS (SELECT *
+    grouped AS (SELECT *,
+                       MIN(CASE
+                               WHEN reading = :text THEN 0
+                               WHEN reading LIKE :text || '%' THEN 1
+                               ELSE 2
+                           END) AS match_rank
                 FROM combined
                 GROUP BY entry_id)
-SELECT *
+SELECT entry_id, element_id, reading, priority, isKana
 FROM grouped
-ORDER BY priority IS NULL, priority
+ORDER BY match_rank, priority IS NULL, priority
 LIMIT :offset, :limit;
+
+getVocabKanjiElementsForEntries:
+SELECT entry_id, element_id, reading, priority
+FROM vocab_kanji_element
+WHERE entry_id IN :entryIds
+ORDER BY entry_id, priority IS NULL, priority, element_id;
+
+getVocabKanaElementsForEntries:
+SELECT entry_id, element_id, reading, no_kanji, priority
+FROM vocab_kana_element
+WHERE entry_id IN :entryIds
+ORDER BY entry_id, priority IS NULL, priority, element_id;
+
+getFuriganaForTexts:
+SELECT text, reading, furigana
+FROM vocab_furigana
+WHERE text IN :texts;
 
 findVocabElementsByIdOrReading:
 WITH

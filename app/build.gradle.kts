@@ -1,12 +1,12 @@
 plugins {
     id("com.android.application")
     kotlin("android")
-    kotlin("kapt")
     kotlin("plugin.parcelize")
     kotlin("plugin.compose")
     id("com.google.gms.google-services")
     id("com.google.firebase.crashlytics")
     id("com.mikepenz.aboutlibraries.plugin")
+    alias(libs.plugins.secrets)
 }
 
 adjustFlavorTasks()
@@ -59,6 +59,7 @@ android {
 
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 
     val keystoreFile = rootProject.file("keystore.jks")
@@ -70,7 +71,17 @@ android {
         System.getenv("SIGN_PASS")?.let { keyPassword = it }
     }
 
-    val debugSigningConfig = signingConfigs.getByName("debug")
+    val debugKeystoreFile = rootProject.file("debug.keystore")
+    val debugSigningConfig = if (debugKeystoreFile.exists()) {
+        signingConfigs.create("debugConfig") {
+            storeFile = debugKeystoreFile
+            storePassword = "android"
+            keyAlias = "androiddebugkey"
+            keyPassword = "android"
+        }
+    } else {
+        signingConfigs.getByName("debug")
+    }
 
     buildTypes.forEach {
         it.signingConfig = if (keystoreFile.exists()) {
@@ -87,14 +98,34 @@ android {
 
 }
 
+androidComponents {
+    beforeVariants { variantBuilder ->
+        if (variantBuilder.flavorName == "googlePlay" && variantBuilder.buildType == "debug") {
+            variantBuilder.enable = false
+        }
+    }
+}
+
 dependencies {
     implementation(project(":core"))
 
-    "googlePlayImplementation"(platform(libs.firebase.bom))
-    "googlePlayImplementation"(libs.firebase.analytics.ktx)
-    "googlePlayImplementation"(libs.firebase.crashlytics.ktx)
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.ai)
+    implementation(libs.firebase.appcheck.recaptcha)
+    implementation(libs.firebase.appcheck.debug)
+    implementation(libs.androidx.credentials)
+    implementation(libs.androidx.credentials.play.services.auth)
+    implementation(libs.googleid)
+
+    "googlePlayImplementation"(libs.firebase.analytics)
+    "googlePlayImplementation"(libs.firebase.crashlytics)
     "googlePlayImplementation"(libs.billing.ktx)
     "googlePlayImplementation"(libs.review.ktx)
+}
+
+secrets {
+    propertiesFileName = ".env"
+    defaultPropertiesFileName = ".env.example"
 }
 
 aboutLibraries {
@@ -111,12 +142,13 @@ fun adjustFlavorTasks() {
 
             val isFdroid = task.name.contains("fdroid", ignoreCase = true)
 
-            val isGoogleTask = task.name.contains("GoogleServices", ignoreCase = true) ||
-                    task.name.contains("Crashlytics", ignoreCase = true)
+            val isGoogleServicesTask = task.name.contains("GoogleServices", ignoreCase = true)
+            val isCrashlyticsTask = task.name.contains("Crashlytics", ignoreCase = true)
+            val isGoogleTask = isGoogleServicesTask || isCrashlyticsTask
 
             val isArtProfileTask = task.name.contains("ArtProfile", ignoreCase = true)
 
-            if ((isFdroid && (isGoogleTask || isArtProfileTask)) || (!hasGoogleServices && isGoogleTask)) {
+            if ((isFdroid && (isCrashlyticsTask || isArtProfileTask)) || (!hasGoogleServices && isGoogleTask)) {
                 println("Disabling task: ${task.name}")
                 task.enabled = false
             }

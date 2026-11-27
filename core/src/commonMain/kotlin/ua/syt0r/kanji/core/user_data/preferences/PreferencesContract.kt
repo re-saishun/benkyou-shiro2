@@ -35,6 +35,7 @@ interface PreferencesContract {
         val kanaGroupsEnabled: SuspendedProperty<Boolean>
 
         val theme: SuspendedProperty<PreferencesTheme>
+        val themePalette: SuspendedProperty<PreferencesThemePalette>
 
         val dailyLimitEnabled: SuspendedProperty<Boolean>
         val dailyLimitConfigurationJson: SuspendedProperty<String>
@@ -61,6 +62,12 @@ interface PreferencesContract {
         val textAnalysisProvider: SuspendedProperty<PreferencesTextAnalysisProvider>
         val textAnalysisGeminiApiKey: SuspendedProperty<String>
         val grammarCatalogUrl: SuspendedProperty<String>
+
+        val supabaseAccessToken: SuspendedProperty<String?>
+        val supabaseRefreshToken: SuspendedProperty<String?>
+        val supabaseUserEmail: SuspendedProperty<String?>
+        val supabaseUserId: SuspendedProperty<String?>
+        val supabaseLastSyncTimestamp: SuspendedProperty<Long?>
     }
 
     interface PracticePreferences {
@@ -95,10 +102,11 @@ enum class PreferencesLetterPracticeType { Writing, Reading, ReadingPicker }
 enum class PreferencesLetterSortOption { AddOrder, Frequency, Name, ReviewTime }
 enum class PreferencesDeckDetailsLetterLayout { Character, Groups }
 enum class PreferencesTheme { System, Light, Dark, Amoled }
+enum class PreferencesThemePalette { Shu, Sumi, Matcha, Sakura, Ai, Suna }
 enum class PreferencesLetterPracticeWritingInputMode { Stroke, Character }
 enum class PreferencesWritingHintMode { OnlyNew, All, None }
 enum class PreferencesVocabPracticeType { Flashcard, ReadingPicker, Writing }
-enum class PreferencesDefaultHomeTab { GeneralDashboard, Grammar, Memorize }
+enum class PreferencesDefaultHomeTab { GeneralDashboard, Grammar, Memorize, Speak }
 enum class PreferencesContentLanguage { English, Indonesian }
 enum class PreferencesTextAnalysisProvider { Automatic, Gemini }
 

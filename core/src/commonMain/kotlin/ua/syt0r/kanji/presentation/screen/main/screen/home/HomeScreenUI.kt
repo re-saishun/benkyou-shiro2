@@ -39,14 +39,18 @@ import androidx.compose.material.icons.filled.Sync
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBarDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
@@ -63,6 +67,7 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import ua.syt0r.kanji.presentation.common.resources.string.resolveString
+import ua.syt0r.kanji.presentation.common.theme.appColors
 import ua.syt0r.kanji.presentation.common.theme.extraColorScheme
 import ua.syt0r.kanji.presentation.common.ui.LocalOrientation
 import ua.syt0r.kanji.presentation.common.ui.Orientation
@@ -128,14 +133,24 @@ fun HomeScreenUI(
 
             }
 
-            Surface(Modifier.weight(1f)) { screenTabContent.invoke() }
+            Surface(
+                modifier = Modifier.weight(1f),
+                color = MaterialTheme.appColors.background
+            ) { screenTabContent.invoke() }
 
         }
 
     } else {
+        val appColors = MaterialTheme.appColors
         Scaffold(
+            containerColor = appColors.background,
             topBar = {
                 CenterAlignedTopAppBar(
+                    colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                        containerColor = appColors.background,
+                        titleContentColor = appColors.textPrimary,
+                        actionIconContentColor = appColors.textPrimary
+                    ),
                     title = {
                         Crossfade(
                             targetState = selectedTabState.value,
@@ -164,10 +179,13 @@ fun HomeScreenUI(
             bottomBar = {
 
                 Column(Modifier.shadow(10.dp)) {
-
+                    HorizontalDivider(
+                        thickness = 0.5.dp,
+                        color = appColors.progressTrack
+                    )
                     Row(
                         modifier = Modifier.fillMaxWidth()
-                            .background(MaterialTheme.colorScheme.surface)
+                            .background(appColors.background)
                             .windowInsetsPadding(NavigationBarDefaults.windowInsets)
                             .wrapContentWidth(align = Alignment.CenterHorizontally)
                             .padding(horizontal = 20.dp, vertical = 10.dp),
@@ -312,9 +330,13 @@ private fun RowScope.VerticalTabButton(
     onClick: () -> Unit
 ) {
 
+    val appColors = MaterialTheme.appColors
     val interactionSource = remember { MutableInteractionSource() }
     val backgroundColor = animateColorAsState(
-        if (selected) MaterialTheme.colorScheme.surfaceVariant else MaterialTheme.colorScheme.surface
+        if (selected) appColors.progressTrack else appColors.background
+    )
+    val contentColor = animateColorAsState(
+        if (selected) appColors.textPrimary else appColors.textMuted
     )
 
     Box(
@@ -337,7 +359,9 @@ private fun RowScope.VerticalTabButton(
             )
             .testTag(tab.buttonTestTag)
     ) {
-        tab.iconContent()
+        CompositionLocalProvider(LocalContentColor provides contentColor.value) {
+            tab.iconContent()
+        }
     }
 
 }
@@ -348,11 +372,12 @@ private fun HorizontalTabButton(
     selected: Boolean,
     onClick: () -> Unit
 ) {
+    val appColors = MaterialTheme.appColors
     Row(
         modifier = Modifier.fillMaxWidth()
             .clip(MaterialTheme.shapes.large)
             .let {
-                if (selected) it.background(MaterialTheme.colorScheme.surfaceVariant)
+                if (selected) it.background(appColors.progressTrack)
                 else it
             }
             .clickable(onClick = onClick)
@@ -361,15 +386,19 @@ private fun HorizontalTabButton(
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Box(
-            modifier = Modifier.size(24.dp),
-            contentAlignment = Alignment.Center
+        CompositionLocalProvider(
+            LocalContentColor provides if (selected) appColors.textPrimary else appColors.textMuted
         ) {
-            tab.iconContent()
+            Box(
+                modifier = Modifier.size(24.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                tab.iconContent()
+            }
+            Text(
+                text = resolveString(tab.titleResolver),
+                style = MaterialTheme.typography.labelLarge
+            )
         }
-        Text(
-            text = resolveString(tab.titleResolver),
-            style = MaterialTheme.typography.labelLarge
-        )
     }
 }

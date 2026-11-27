@@ -86,6 +86,9 @@ interface Strings {
 
     val info: InfoScreenStrings
 
+    val speak: SpeakStrings
+    val dailyStreak: DailyStreakStrings
+
     val urlPickerMessage: String
     val urlPickerErrorMessage: String
 
@@ -115,6 +118,19 @@ interface AccountScreenStrings {
     val issueSubscriptionOutdatedMessage: String
     val issueOtherTitle: String
     val issueOtherMessageFallback: String
+
+    val supabaseSectionTitle: String
+    val supabaseSectionDescription: String
+    val continueWithGoogleSupabase: String
+    val supabaseSignedInLabel: String
+    val supabaseUploadBackupButton: String
+    val supabaseRestoreBackupButton: String
+    val supabaseLastSyncTemplate: String
+    val supabaseNotConfiguredHint: String
+    val legacyMigrationPrompt: String
+    val legacyMigrationBannerTitle: String
+    val legacyMigrationPullAndSyncButton: String
+    val legacySignOutButton: String
 }
 
 interface SyncScreenStrings {
@@ -225,6 +241,7 @@ interface HomeStrings {
     val generalDashboardTabLabel: String
     val grammarDashboardTabLabel: String
     val memorizeDashboardTabLabel: String
+    val speakTabLabel: String
     val lettersDashboardTabLabel: String
     val vocabDashboardTabLabel: String
     val statsTabLabel: String
@@ -372,10 +389,17 @@ interface SettingsStrings {
     val analyticsMessage: String
 
     val themeTitle: String
+    val themeModeTitle: String
     val themeSystem: String
     val themeLight: String
     val themeDark: String
     val themeAmoled: String
+    val themePaletteShu: String
+    val themePaletteSumi: String
+    val themePaletteMatcha: String
+    val themePaletteSakura: String
+    val themePaletteAi: String
+    val themePaletteSuna: String
 
     val reminderTitle: String
     val reminderEnabled: String
@@ -390,6 +414,12 @@ interface SettingsStrings {
     val backupTitle: String
     val donateTitle: String
     val aboutTitle: String
+
+    val accountSectionDescription: String
+    val tutorialDescription: String
+    val systemTitle: String
+    val systemDescription: String
+    val aboutDescription: String
 
     val pickerDialogCancel: String
     val pickerDialogApply: String
@@ -407,14 +437,65 @@ interface ReminderDialogStrings {
 
 interface AboutStrings {
     val title: String
+    val appSubtitle: String
     val version: (versionName: String) -> String
+    val forkAttributionTitle: String
+    val forkAttributionDescription: String
     val githubTitle: String
     val githubDescription: String
+    val kanjiDojoGithubTitle: String
+    val kanjiDojoGithubDescription: String
+    val socialTitle: String
+    val socialDescription: String
+    val downloadsTitle: String
+    val downloadsDescription: String
+    val feedbackTitle: String
+    val feedbackDescription: String
+    val donateTitle: String
+    val donateDescription: String
     val versionChangesTitle: String
     val versionChangesDescription: String
     val versionChangesButton: String
     val creditsTitle: String
     val creditsDescription: String
+}
+
+interface SpeakStrings {
+    val title: String
+    val subtitle: String
+    val micPermissionNeededTitle: String
+    val micPermissionNeededMessage: String
+    val grantMicPermissionButton: String
+    val startCallButton: String
+    val connectingLabel: String
+    val liveStatusLabel: String
+    val endCallButton: String
+    val muteMicButton: String
+    val unmuteMicButton: String
+    val topicSectionTitle: String
+    val topicFreeTalk: String
+    val topicCafeOrder: String
+    val topicConvenienceStore: String
+    val topicStationTravel: String
+    val topicSelfIntro: String
+    val topicCustom: String
+    val levelSectionTitle: String
+    val customPromptLabel: String
+    val customPromptPlaceholder: String
+    val starterPhrasesTitle: String
+    val liveCallTips: String
+    val unsupportedMessage: String
+}
+
+interface DailyStreakStrings {
+    val currentLabel: String
+    val bestLabel: String
+    val totalDaysLabel: String
+    val statusCompleted: String
+    val statusAtRisk: String
+    val statusExpired: String
+    val statusStart: String
+    val daysUnit: (Int) -> String
 }
 
 

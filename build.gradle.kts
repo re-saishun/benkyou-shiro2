@@ -16,5 +16,6 @@ plugins {
     id("org.jetbrains.compose") apply false
     id("org.jetbrains.compose.hot-reload") apply false
     alias(libs.plugins.build.config) apply false
+    alias(libs.plugins.secrets) apply false
     id("com.mikepenz.aboutlibraries.plugin") apply false
 }

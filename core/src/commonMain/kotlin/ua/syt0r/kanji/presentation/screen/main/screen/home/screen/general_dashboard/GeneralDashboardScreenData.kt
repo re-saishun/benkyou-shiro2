@@ -27,7 +27,8 @@ sealed interface StudyTargetProgress {
 
     data class WithDecks(
         val options: StudyTargetPracticeOptions,
-        val totalProgress: Float
+        val totalProgress: Float,
+        val decksCount: Int = 0
     ) : StudyTargetProgress
 
 }
@@ -59,6 +60,11 @@ enum class StudyTarget(
         Res.string.study_category_letter,
         Res.string.practice_type_flashcard,
         LetterPracticeType.Reading
+    ),
+    LetterReadingPicker(
+        Res.string.study_category_letter,
+        Res.string.practice_type_reading_picker,
+        LetterPracticeType.ReadingPicker
     ),
     VocabFlashcard(
         Res.string.study_category_vocab,
@@ -93,9 +99,11 @@ data class GeneralDashboardStats(
     val longestStreak: Int,
     val reviewsToday: Int,
     val newItemsToday: Int = 0,
+    val totalPracticeDays: Int = 0,
     val streakStatus: StreakStatus = StreakStatus.NOT_STARTED,
     val motivationTitle: String? = null,
-    val motivationMessage: String? = null
+    val motivationMessage: String? = null,
+    val isMilestone: Boolean = false
 )
 
 enum class SocialButton(

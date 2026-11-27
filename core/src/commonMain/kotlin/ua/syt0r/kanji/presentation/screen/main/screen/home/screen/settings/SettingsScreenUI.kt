@@ -5,7 +5,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Spacer
@@ -17,11 +17,18 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.automirrored.outlined.MenuBook
+import androidx.compose.material.icons.outlined.AccountCircle
+import androidx.compose.material.icons.outlined.Backup
+import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material.icons.outlined.Sync
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -30,6 +37,7 @@ import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
@@ -44,52 +52,65 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
-import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
-import ua.syt0r.kanji.PlatformFeature
 import ua.syt0r.kanji.Res
-import ua.syt0r.kanji.general_dashboard_downloads
-import ua.syt0r.kanji.general_dashboard_social
 import ua.syt0r.kanji.general_dashboard_tutorial
-import ua.syt0r.kanji.presentation.common.AppDropdownMenu
-import ua.syt0r.kanji.presentation.common.AppDropdownMenuItem
 import ua.syt0r.kanji.presentation.common.MultiplatformBackHandler
 import ua.syt0r.kanji.presentation.common.MultiplatformDialog
 import ua.syt0r.kanji.presentation.common.resources.string.resolveString
+import ua.syt0r.kanji.presentation.common.theme.appCardBorder
+import ua.syt0r.kanji.presentation.common.theme.appColors
 import ua.syt0r.kanji.presentation.common.ui.LocalOrientation
 import ua.syt0r.kanji.presentation.common.ui.Orientation
-import ua.syt0r.kanji.presentation.screen.main.screen.home.screen.general_dashboard.SocialButton
 import ua.syt0r.kanji.presentation.screen.main.screen.home.screen.general_dashboard.ui.TutorialDialog
 import ua.syt0r.kanji.presentation.screen.main.screen.home.screen.settings.SettingsScreenContract.ScreenState
 import ua.syt0r.kanji.presentation.screen.main.screen.practice_common.DisplayableEnum
 import kotlin.enums.EnumEntries
+
+private enum class SettingsSection {
+    Root,
+    Account,
+    System
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreenUI(
     state: State<ScreenState>,
     onNavigateBack: () -> Unit,
-    onSocialClick: (SocialButton) -> Unit,
-    onDownloadsClick: () -> Unit,
     onBackupButtonClick: () -> Unit,
     onAccountButtonClick: () -> Unit,
     onSyncButtonClick: () -> Unit,
-    onFeedbackButtonClick: () -> Unit,
     onAboutButtonClick: () -> Unit,
-    onDonateButtonClick: () -> Unit,
-    loadedContent: @Composable ColumnScope.(ScreenState.Loaded) -> Unit
+    systemContent: @Composable ColumnScope.(ScreenState.Loaded) -> Unit
 ) {
 
-    MultiplatformBackHandler(onBack = onNavigateBack)
+    var currentSection by rememberSaveable { mutableStateOf(SettingsSection.Root) }
+
+    val handleBack: () -> Unit = {
+        if (currentSection != SettingsSection.Root) {
+            currentSection = SettingsSection.Root
+        } else {
+            onNavigateBack()
+        }
+    }
+
+    MultiplatformBackHandler(onBack = handleBack)
 
     var showTutorialDialog by remember { mutableStateOf(false) }
     if (showTutorialDialog) {
         TutorialDialog { showTutorialDialog = false }
     }
 
-    val title = resolveString { home.settingsTabLabel }
+    val title = when (currentSection) {
+        SettingsSection.Root -> resolveString { home.settingsTabLabel }
+        SettingsSection.Account -> resolveString { settings.account }
+        SettingsSection.System -> resolveString { settings.systemTitle }
+    }
 
     Scaffold(
         topBar = {
@@ -97,7 +118,7 @@ fun SettingsScreenUI(
                 title = { Text(text = title) },
                 navigationIcon = {
                     IconButton(
-                        onClick = onNavigateBack,
+                        onClick = handleBack,
                         modifier = Modifier.testTag("settings_back_button")
                     ) {
                         Icon(
@@ -111,12 +132,12 @@ fun SettingsScreenUI(
     ) { paddingValues ->
 
         AnimatedContent(
-            targetState = state.value,
+            targetState = state.value to currentSection,
             transitionSpec = { fadeIn() togetherWith fadeOut() },
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-        ) { screenState ->
+        ) { (screenState, section) ->
 
             when (screenState) {
                 ScreenState.Loading -> {
@@ -124,99 +145,143 @@ fun SettingsScreenUI(
                 }
 
                 is ScreenState.Loaded -> {
-                    SettingsContent {
+                    when (section) {
+                        SettingsSection.Root -> {
+                            SettingsContent(
+                                verticalArrangement = Arrangement.spacedBy(10.dp)
+                            ) {
+                                SettingsCategoryCard(
+                                    icon = Icons.Outlined.AccountCircle,
+                                    title = resolveString { settings.account },
+                                    subtitle = resolveString { settings.accountSectionDescription },
+                                    testTag = "settings_category_account",
+                                    onClick = { currentSection = SettingsSection.Account }
+                                )
 
-                        loadedContent(screenState)
+                                SettingsCategoryCard(
+                                    icon = Icons.AutoMirrored.Outlined.MenuBook,
+                                    title = stringResource(Res.string.general_dashboard_tutorial),
+                                    subtitle = resolveString { settings.tutorialDescription },
+                                    testTag = "settings_category_tutorial",
+                                    onClick = { showTutorialDialog = true }
+                                )
 
-                        SettingsSocialButton(onSocialClick)
-                        SettingsDownloadsButton(onDownloadsClick)
-                        SettingsTutorialButton(onClick = { showTutorialDialog = true })
+                                SettingsCategoryCard(
+                                    icon = Icons.Outlined.Settings,
+                                    title = resolveString { settings.systemTitle },
+                                    subtitle = resolveString { settings.systemDescription },
+                                    testTag = "settings_category_system",
+                                    onClick = { currentSection = SettingsSection.System }
+                                )
 
-                        SettingsBackupButton(onBackupButtonClick)
-                        SettingsAccountButton(onAccountButtonClick)
-                        SettingsSyncButton(onSyncButtonClick)
-                        SettingsFeedbackButton(onFeedbackButtonClick)
-                        SettingsAboutButton(onAboutButtonClick)
-                        if (PlatformFeature.supported) {
-                            SettingsDonateButton(onDonateButtonClick)
+                                SettingsCategoryCard(
+                                    icon = Icons.Outlined.Info,
+                                    title = resolveString { settings.aboutTitle },
+                                    subtitle = resolveString { settings.aboutDescription },
+                                    testTag = "settings_category_about",
+                                    onClick = onAboutButtonClick
+                                )
+
+                                Spacer(Modifier.height(20.dp))
+                            }
                         }
 
-                        Spacer(Modifier.height(20.dp))
+                        SettingsSection.Account -> {
+                            SettingsContent(
+                                verticalArrangement = Arrangement.spacedBy(10.dp)
+                            ) {
+                                SettingsCategoryCard(
+                                    icon = Icons.Outlined.AccountCircle,
+                                    title = resolveString { settings.account },
+                                    subtitle = resolveString { account.supabaseSectionDescription },
+                                    testTag = "settings_account_button",
+                                    onClick = onAccountButtonClick
+                                )
+                                SettingsCategoryCard(
+                                    icon = Icons.Outlined.Backup,
+                                    title = resolveString { settings.backupTitle },
+                                    subtitle = resolveString { backup.title },
+                                    testTag = "settings_backup_button",
+                                    onClick = onBackupButtonClick
+                                )
+                                SettingsCategoryCard(
+                                    icon = Icons.Outlined.Sync,
+                                    title = resolveString { settings.sync },
+                                    subtitle = resolveString { sync.guideTitle },
+                                    testTag = "settings_sync_button",
+                                    onClick = onSyncButtonClick
+                                )
+                                Spacer(Modifier.height(20.dp))
+                            }
+                        }
 
+                        SettingsSection.System -> {
+                            SettingsContent {
+                                systemContent(screenState)
+                                Spacer(Modifier.height(20.dp))
+                            }
+                        }
                     }
                 }
             }
-
         }
-
     }
-
 }
 
 @Composable
-private fun SettingsSocialButton(selected: (SocialButton) -> Unit) {
-    var showDropdown by rememberSaveable { mutableStateOf(false) }
-
-    Box {
+private fun SettingsCategoryCard(
+    icon: ImageVector,
+    title: String,
+    subtitle: String,
+    testTag: String,
+    onClick: () -> Unit
+) {
+    val appColors = MaterialTheme.appColors
+    Surface(
+        shape = RoundedCornerShape(12.dp),
+        color = appColors.card,
+        border = appCardBorder(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(12.dp))
+            .clickable(onClick = onClick)
+            .testTag(testTag)
+    ) {
         ListItem(
-            headlineContent = { Text(stringResource(Res.string.general_dashboard_social)) },
-            trailingContent = {
-                Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, null)
-                AppDropdownMenu(
-                    expanded = showDropdown,
-                    onDismissRequest = { showDropdown = false }
-                ) {
-                    SocialButton.entries.forEach {
-                        AppDropdownMenuItem(
-                            onClick = {
-                                showDropdown = false
-                                selected(it)
-                            },
-                            content = {
-                                Icon(painterResource(it.icon), null)
-                                Text(stringResource(it.title))
-                            }
-                        )
-                    }
-                }
+            leadingContent = {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = null,
+                    tint = appColors.accent
+                )
             },
-            modifier = Modifier
-                .clip(MaterialTheme.shapes.large)
-                .fillMaxWidth()
-                .clickable { showDropdown = true }
-                .testTag("settings_social_button")
+            headlineContent = {
+                Text(
+                    text = title,
+                    color = appColors.textPrimary
+                )
+            },
+            supportingContent = {
+                Text(
+                    text = subtitle,
+                    color = appColors.textMuted
+                )
+            },
+            trailingContent = {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                    contentDescription = null,
+                    tint = appColors.textMuted
+                )
+            },
+            colors = ListItemDefaults.colors(containerColor = Color.Transparent)
         )
     }
 }
 
 @Composable
-private fun SettingsDownloadsButton(onClick: () -> Unit) {
-    ListItem(
-        headlineContent = { Text(stringResource(Res.string.general_dashboard_downloads)) },
-        trailingContent = { Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, null) },
-        modifier = Modifier
-            .clip(MaterialTheme.shapes.large)
-            .fillMaxWidth()
-            .clickable(onClick = onClick)
-            .testTag("settings_downloads_button")
-    )
-}
-
-@Composable
-private fun SettingsTutorialButton(onClick: () -> Unit) {
-    ListItem(
-        headlineContent = { Text(stringResource(Res.string.general_dashboard_tutorial)) },
-        trailingContent = { Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, null) },
-        modifier = Modifier
-            .clip(MaterialTheme.shapes.large)
-            .fillMaxWidth()
-            .clickable(onClick = onClick)
-            .testTag("settings_tutorial_button")
-    )
-}
-
-@Composable
 fun SettingsContent(
+    verticalArrangement: Arrangement.Vertical = Arrangement.Top,
     content: @Composable ColumnScope.() -> Unit
 ) {
 
@@ -225,13 +290,14 @@ fun SettingsContent(
             .fillMaxSize()
             .wrapContentWidth()
             .verticalScroll(rememberScrollState())
-            .widthIn(max = 400.dp)
-            .padding(horizontal = 20.dp)
+            .widthIn(max = 440.dp)
+            .padding(horizontal = 20.dp, vertical = 8.dp),
+        verticalArrangement = verticalArrangement
     ) {
 
         val orientation = LocalOrientation.current
         if (orientation == Orientation.Landscape) {
-            Spacer(Modifier.height(20.dp))
+            Spacer(Modifier.height(12.dp))
         }
 
         content()
@@ -265,54 +331,6 @@ fun SettingsSwitchRow(
 }
 
 @Composable
-fun SettingsBackupButton(onClick: () -> Unit) {
-    SettingsTextButton(
-        title = resolveString { settings.backupTitle },
-        onClick = onClick
-    )
-}
-
-@Composable
-fun SettingsAccountButton(onClick: () -> Unit) {
-    SettingsTextButton(
-        title = resolveString { settings.account },
-        onClick = onClick
-    )
-}
-
-@Composable
-fun SettingsSyncButton(onClick: () -> Unit) {
-    SettingsTextButton(
-        title = resolveString { settings.sync },
-        onClick = onClick
-    )
-}
-
-@Composable
-fun SettingsFeedbackButton(onClick: () -> Unit) {
-    SettingsTextButton(
-        title = resolveString { settings.feedbackTitle },
-        onClick = onClick
-    )
-}
-
-@Composable
-fun SettingsAboutButton(onClick: () -> Unit) {
-    SettingsTextButton(
-        title = resolveString { settings.aboutTitle },
-        onClick = onClick
-    )
-}
-
-@Composable
-fun SettingsDonateButton(onClick: () -> Unit) {
-    SettingsTextButton(
-        title = resolveString { settings.donateTitle },
-        onClick = onClick
-    )
-}
-
-@Composable
 fun SettingsTextButton(
     title: String,
     subtitle: String? = null,
@@ -327,7 +345,8 @@ fun SettingsTextButton(
 
             else -> null
         },
-        modifier = Modifier.clip(MaterialTheme.shapes.large)
+        modifier = Modifier
+            .clip(MaterialTheme.shapes.large)
             .fillMaxWidth()
             .clickable(onClick = onClick)
     )
@@ -348,6 +367,7 @@ fun <T> SettingsPreferencePickerDialog(
         onDismissRequest = onDismissRequest,
         title = { Text(title) },
         content = {
+            val appColors = MaterialTheme.appColors
             options.forEach {
                 val isOptionSelected = selected == it
                 ListItem(
@@ -355,13 +375,20 @@ fun <T> SettingsPreferencePickerDialog(
                         Text(resolveString(it.titleResolver))
                     },
                     trailingContent = {
-                        if (isOptionSelected) Icon(Icons.Default.Check, null)
+                        if (isOptionSelected) {
+                            Icon(
+                                imageVector = Icons.Default.Check,
+                                contentDescription = null,
+                                tint = appColors.accent
+                            )
+                        }
                     },
                     colors = ListItemDefaults.colors(
                         containerColor = when {
-                            isOptionSelected -> MaterialTheme.colorScheme.surfaceVariant
-                            else -> MaterialTheme.colorScheme.surface
-                        }
+                            isOptionSelected -> appColors.progressTrack
+                            else -> Color.Transparent
+                        },
+                        headlineColor = appColors.textPrimary
                     ),
                     modifier = Modifier
                         .clip(MaterialTheme.shapes.large)

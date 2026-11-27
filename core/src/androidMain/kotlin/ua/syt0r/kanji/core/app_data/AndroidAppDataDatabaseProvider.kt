@@ -211,6 +211,7 @@ class AndroidAppDataDatabaseProvider(
 
                 override fun onOpen(db: SupportSQLiteDatabase) {
                     super.onOpen(db)
+                    ensureSearchIndexes(db)
                     Logger.logMethod()
                     onDatabaseOpen.complete(Unit)
                 }
@@ -221,5 +222,29 @@ class AndroidAppDataDatabaseProvider(
         onDatabaseOpen.await()
         Logger.d("driver ready version[$version] wasUpgraded[$wasUpgraded]")
         return DriverCreationResult(driver, wasUpgraded)
+    }
+
+    private fun ensureSearchIndexes(db: SupportSQLiteDatabase) {
+        if (db.isReadOnly) return
+        val statements = listOf(
+            "CREATE INDEX IF NOT EXISTS idx_vocab_kanji_element_entry_id ON vocab_kanji_element(entry_id)",
+            "CREATE INDEX IF NOT EXISTS idx_vocab_kanji_element_reading ON vocab_kanji_element(reading)",
+            "CREATE INDEX IF NOT EXISTS idx_vocab_kana_element_entry_id ON vocab_kana_element(entry_id)",
+            "CREATE INDEX IF NOT EXISTS idx_vocab_kana_element_reading ON vocab_kana_element(reading)",
+            "CREATE INDEX IF NOT EXISTS idx_vocab_sense_entry_id ON vocab_sense(entry_id)",
+            "CREATE INDEX IF NOT EXISTS idx_kanji_radical_radical ON kanji_radical(radical)",
+            "CREATE INDEX IF NOT EXISTS idx_letter_vocab_example_letter ON letter_vocab_example(letter)"
+        )
+        runCatching {
+            db.beginTransaction()
+            try {
+                statements.forEach { db.execSQL(it) }
+                db.setTransactionSuccessful()
+            } finally {
+                db.endTransaction()
+            }
+        }.onFailure {
+            Logger.d("Skipping index creation: ${it.message}")
+        }
     }
 }

@@ -28,6 +28,7 @@ class HomeViewModel(
             PreferencesDefaultHomeTab.GeneralDashboard -> HomeScreenTab.GeneralDashboard
             PreferencesDefaultHomeTab.Grammar -> HomeScreenTab.GrammarDashboard
             PreferencesDefaultHomeTab.Memorize -> HomeScreenTab.Memorize
+            PreferencesDefaultHomeTab.Speak -> HomeScreenTab.Speak
         }
     }
 

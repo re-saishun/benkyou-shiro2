@@ -207,7 +207,8 @@ class DefaultSubscribeOnGeneralDashboardScreenDataUseCase(
                 dueCards = dueCards,
                 combinedCards = combinedCards
             ),
-            totalProgress = getProgress(decksData.uniqueCardsCount, combinedNotNew.size)
+            totalProgress = getProgress(decksData.uniqueCardsCount, combinedNotNew.size),
+            decksCount = decksData.decks.size
         )
     }
 
@@ -247,7 +248,8 @@ class DefaultSubscribeOnGeneralDashboardScreenDataUseCase(
                 dueCards = dueCards,
                 combinedCards = combinedCards
             ),
-            totalProgress = getProgress(decksData.uniqueCardsCount, combinedNotNew.size)
+            totalProgress = getProgress(decksData.uniqueCardsCount, combinedNotNew.size),
+            decksCount = decksData.decks.size
         )
     }
 
@@ -287,7 +289,8 @@ class DefaultSubscribeOnGeneralDashboardScreenDataUseCase(
                 dueCards = dueCards,
                 combinedCards = combinedCards
             ),
-            totalProgress = getProgress(decksData.uniqueCardsCount, combinedNotNew.size)
+            totalProgress = getProgress(decksData.uniqueCardsCount, combinedNotNew.size),
+            decksCount = decksData.decks.size
         )
     }
 
@@ -312,9 +315,11 @@ class DefaultSubscribeOnGeneralDashboardScreenDataUseCase(
             longestStreak = streakData.longestStreak,
             reviewsToday = reviewsToday,
             newItemsToday = newItemsToday,
+            totalPracticeDays = streakData.totalPracticeDays,
             streakStatus = motivation.status,
             motivationTitle = motivation.title,
-            motivationMessage = motivation.message
+            motivationMessage = motivation.message,
+            isMilestone = motivation.isMilestone
         )
     }
 

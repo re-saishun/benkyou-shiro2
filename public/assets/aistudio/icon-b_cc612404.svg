@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <title>Benkyou Shiro mascot icon</title>
+  <rect width="512" height="512" fill="#201c1c"/>
+  <g transform="translate(256 256) scale(0.75) translate(-250 -264)">
+    <polygon points="300,58 410,88 356,292 324,282" fill="#f2eded"/>
+    <circle cx="352" cy="360" r="42" fill="#f2eded"/>
+    <path d="M190 410 L186 466 M268 412 L282 462" stroke="#ff5a5a" stroke-width="15" stroke-linecap="round" fill="none"/>
+    <circle cx="228" cy="282" r="140" fill="#ff5a5a"/>
+    <path d="M368 252 Q392 238 398 196" stroke="#ff5a5a" stroke-width="15" stroke-linecap="round" fill="none"/>
+    <ellipse cx="180" cy="272" rx="16" ry="25" fill="#201c1c"/>
+    <ellipse cx="262" cy="272" rx="16" ry="25" fill="#201c1c"/>
+  </g>
+</svg>

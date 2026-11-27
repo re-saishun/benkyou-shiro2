@@ -70,6 +70,8 @@ object EnglishStrings : Strings {
     override val letterPractice: LetterPracticeStrings = EnglishLetterPracticeStrings
     override val vocabPractice: VocabPracticeStrings = EnglishVocabPracticeStrings
     override val info: InfoScreenStrings = EnglishInfoScreenStrings
+    override val speak: SpeakStrings = EnglishSpeakStrings
+    override val dailyStreak: DailyStreakStrings = EnglishDailyStreakStrings
 
     override val urlPickerMessage: String = "Open With"
     override val urlPickerErrorMessage: String = "Web browser not found"
@@ -84,6 +86,7 @@ object EnglishHomeStrings : HomeStrings {
     override val generalDashboardTabLabel: String = "Home"
     override val grammarDashboardTabLabel: String = "Grammar"
     override val memorizeDashboardTabLabel: String = "Memorize"
+    override val speakTabLabel: String = "Speak"
     override val lettersDashboardTabLabel: String = "Letters"
     override val vocabDashboardTabLabel: String = "Vocab"
     override val statsTabLabel: String = "Stats"
@@ -305,10 +308,17 @@ object EnglishSettingsStrings : SettingsStrings {
     override val analyticsTitle: String = "Analytics"
     override val analyticsMessage: String = "Allow sending anonymous app usage data"
     override val themeTitle: String = "Theme"
+    override val themeModeTitle: String = "Appearance"
     override val themeSystem: String = "System"
     override val themeLight: String = "Light"
     override val themeDark: String = "Dark"
     override val themeAmoled: String = "AMOLED"
+    override val themePaletteShu: String = "Shu"
+    override val themePaletteSumi: String = "Sumi"
+    override val themePaletteMatcha: String = "Matcha"
+    override val themePaletteSakura: String = "Sakura"
+    override val themePaletteAi: String = "Ai"
+    override val themePaletteSuna: String = "Suna"
     override val reminderTitle: String = "Reminder Notification"
     override val reminderEnabled: String = "Enabled"
     override val reminderDisabled: String = "Disabled"
@@ -322,6 +332,11 @@ object EnglishSettingsStrings : SettingsStrings {
     override val backupTitle: String = "Backup & Restore"
     override val donateTitle: String = "Donate"
     override val aboutTitle: String = "About"
+    override val accountSectionDescription: String = "Account, backup & restore, cloud sync"
+    override val tutorialDescription: String = "Quick guide on study modes and SRS"
+    override val systemTitle: String = "System"
+    override val systemDescription: String = "Theme, reminders, language, default tab, daily reset"
+    override val aboutDescription: String = "App info, Kanji Dojo fork, GitHub, feedback, donate"
     override val pickerDialogCancel: String = "Cancel"
     override val pickerDialogApply: String = "Apply"
 }
@@ -338,12 +353,25 @@ object EnglishReminderDialogStrings : ReminderDialogStrings {
 
 object EnglishAboutStrings : AboutStrings {
     override val title: String = "About"
+    override val appSubtitle: String = "Japanese kanji, grammar, vocabulary & AI conversation practice"
     override val version: (versionName: String) -> String = { "Version: $it" }
+    override val forkAttributionTitle: String = "Fork of Kanji Dojo"
+    override val forkAttributionDescription: String = "Built on the open-source Kanji Dojo project"
+    override val githubTitle: String = "GitHub"
+    override val githubDescription: String = "Source code, bug reports, discussions"
+    override val kanjiDojoGithubTitle: String = "Kanji Dojo (Upstream GitHub)"
+    override val kanjiDojoGithubDescription: String = "Original open-source repository by syt0r"
+    override val socialTitle: String = "Social"
+    override val socialDescription: String = "Discord community & YouTube updates"
+    override val downloadsTitle: String = "Downloads"
+    override val downloadsDescription: String = "Official builds and platform releases"
+    override val feedbackTitle: String = "Feedback"
+    override val feedbackDescription: String = "Send bug reports or feature suggestions"
+    override val donateTitle: String = "Donate"
+    override val donateDescription: String = "Support ongoing development"
     override val versionChangesTitle: String = "Version Changes"
     override val versionChangesDescription: String = "App changes history"
     override val versionChangesButton: String = "Close"
-    override val githubTitle: String = "GitHub"
-    override val githubDescription: String = "Source code, bug reports, discussions"
     override val creditsTitle: String = "Credits"
     override val creditsDescription: String = "Used libraries and data sources"
 }
@@ -789,6 +817,57 @@ object EnglishAccountScreenStrings : AccountScreenStrings {
     override val issueSubscriptionOutdatedMessage = "Click to refresh"
     override val issueOtherTitle = "Error"
     override val issueOtherMessageFallback = "Unknown error"
+
+    override val supabaseSectionTitle = "Cloud Account (Supabase)"
+    override val supabaseSectionDescription = "Sign in with Google to back up and restore your study progress via Supabase"
+    override val continueWithGoogleSupabase = "Continue with Google"
+    override val supabaseSignedInLabel = "Signed in with Google"
+    override val supabaseUploadBackupButton = "Upload Backup to Supabase"
+    override val supabaseRestoreBackupButton = "Restore Backup from Supabase"
+    override val supabaseLastSyncTemplate = "Last synced: %s"
+    override val supabaseNotConfiguredHint = "Add SUPABASE_URL and SUPABASE_ANON_KEY in AI Studio Secrets to enable cloud sign-in."
+    override val legacyMigrationPrompt = "Migrating from a legacy Kanji Dojo account? Sign in with legacy account"
+    override val legacyMigrationBannerTitle = "Legacy Account Connected"
+    override val legacyMigrationPullAndSyncButton = "Pull Legacy Cloud Data & Sync to Supabase"
+    override val legacySignOutButton = "Sign out Legacy Account"
+}
+
+object EnglishSpeakStrings : SpeakStrings {
+    override val title = "Speak"
+    override val subtitle = "Real-time AI Japanese voice conversation practice"
+    override val micPermissionNeededTitle = "Microphone access required"
+    override val micPermissionNeededMessage = "Allow microphone recording so you can speak directly with the AI tutor during a live call."
+    override val grantMicPermissionButton = "Allow Microphone"
+    override val startCallButton = "Start Live Voice Call"
+    override val connectingLabel = "Connecting live audio..."
+    override val liveStatusLabel = "Live Call Active"
+    override val endCallButton = "End Call"
+    override val muteMicButton = "Mute Mic"
+    override val unmuteMicButton = "Unmute Mic"
+    override val topicSectionTitle = "Conversation Topic"
+    override val topicFreeTalk = "Free Talk"
+    override val topicCafeOrder = "Cafe Order"
+    override val topicConvenienceStore = "Conbini"
+    override val topicStationTravel = "Station & Travel"
+    override val topicSelfIntro = "Self Intro"
+    override val topicCustom = "Custom"
+    override val levelSectionTitle = "Difficulty"
+    override val customPromptLabel = "Custom scenario or roleplay"
+    override val customPromptPlaceholder = "e.g., Practice ordering ramen with extra chashu"
+    override val starterPhrasesTitle = "Starter Phrases"
+    override val liveCallTips = "Speak naturally in Japanese. The AI tutor adapts to your JLPT level and gently corrects mistakes."
+    override val unsupportedMessage = "Live voice calls are only supported on Android devices with Firebase AI Logic."
+}
+
+object EnglishDailyStreakStrings : DailyStreakStrings {
+    override val currentLabel = "Current"
+    override val bestLabel = "Best"
+    override val totalDaysLabel = "Total Days"
+    override val statusCompleted = "Done Today"
+    override val statusAtRisk = "Due Today"
+    override val statusExpired = "Expired"
+    override val statusStart = "Ready"
+    override val daysUnit: (Int) -> String = { if (it == 1) "1 day" else "$it days" }
 }
 
 object EnglishSyncScreenStrings : SyncScreenStrings {

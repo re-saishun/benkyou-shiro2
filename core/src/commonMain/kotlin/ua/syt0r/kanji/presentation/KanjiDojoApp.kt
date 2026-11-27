@@ -2,6 +2,7 @@ package ua.syt0r.kanji.presentation
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.safeDrawingPadding
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
@@ -29,9 +30,10 @@ fun KanjiDojoApp(
     AppTheme(
         useDarkTheme = themeManager.isDarkTheme,
         useAmoledTheme = themeManager.isAmoledTheme,
+        palette = themeManager.currentPalette.value,
         orientation = orientation
     ) {
-        Surface {
+        Surface(color = MaterialTheme.colorScheme.background) {
             Box(
                 modifier = Modifier.safeDrawingPadding()
             ) {

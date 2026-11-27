@@ -7,6 +7,7 @@ import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -74,6 +75,7 @@ import ua.syt0r.kanji.presentation.common.JapaneseWordUI
 import ua.syt0r.kanji.presentation.common.isNearListEnd
 import ua.syt0r.kanji.presentation.common.rememberCollapsibleContainerState
 import ua.syt0r.kanji.presentation.common.resources.string.resolveString
+import ua.syt0r.kanji.presentation.common.theme.appColors
 import ua.syt0r.kanji.presentation.common.trackItemPosition
 import ua.syt0r.kanji.presentation.common.ui.kanji.HighlightedLetter
 import ua.syt0r.kanji.presentation.dialog.SaveWordDialog
@@ -115,10 +117,17 @@ fun SearchScreenUI(
             .launchIn(this)
     }
 
+    val appColors = MaterialTheme.appColors
+
     ModalBottomSheetLayout(
         sheetState = sheetState,
+        sheetBackgroundColor = if (appColors.useCardBorder) appColors.card else MaterialTheme.colorScheme.surface,
+        sheetContentColor = appColors.textPrimary,
         sheetContent = {
-            Surface {
+            Surface(
+                color = if (appColors.useCardBorder) appColors.card else MaterialTheme.colorScheme.surface,
+                contentColor = appColors.textPrimary
+            ) {
                 RadicalSearch(
                     state = radicalsState,
                     selectedRadicals = selectedRadicalsState,
@@ -201,21 +210,27 @@ private fun InputSection(
     val isHintVisible = remember {
         derivedStateOf { !isInputFocused.value && enteredText.text.isEmpty() }
     }
-    val color = MaterialTheme.colorScheme.onSurfaceVariant
+    val appColors = MaterialTheme.appColors
+    val textColor = appColors.textPrimary
+    val mutedColor = appColors.textMuted
 
     Row(
         modifier = modifier
             .fillMaxWidth()
             .padding(vertical = 16.dp, horizontal = 20.dp)
             .clip(MaterialTheme.shapes.large)
-            .background(MaterialTheme.colorScheme.surfaceVariant),
+            .background(appColors.card)
+            .let {
+                if (appColors.useCardBorder) it.border(0.5.dp, appColors.progressTrack, MaterialTheme.shapes.large)
+                else it
+            },
         verticalAlignment = Alignment.CenterVertically
     ) {
         IconButton(
             onClick = onOpenRadicalSearch,
             modifier = Modifier.testTag("search_radical_button")
         ) {
-            Text(text = "部")
+            Text(text = "部", color = appColors.accent)
         }
         Box(modifier = Modifier.weight(1f)) {
             BasicTextField(
@@ -228,8 +243,8 @@ private fun InputSection(
                 maxLines = 1,
                 singleLine = true,
                 interactionSource = interactionSource,
-                cursorBrush = SolidColor(color),
-                textStyle = MaterialTheme.typography.bodyLarge.copy(color)
+                cursorBrush = SolidColor(appColors.accent),
+                textStyle = MaterialTheme.typography.bodyLarge.copy(textColor)
             )
 
             androidx.compose.animation.AnimatedVisibility(
@@ -240,7 +255,7 @@ private fun InputSection(
                 Text(
                     text = resolveString { search.inputHint },
                     style = MaterialTheme.typography.titleMedium,
-                    color = color.copy(alpha = 0.7f)
+                    color = mutedColor
                 )
             }
         }
@@ -248,7 +263,7 @@ private fun InputSection(
             onClick = { enteredText = TextFieldValue() },
             modifier = Modifier.testTag("search_clear_button")
         ) {
-            Icon(Icons.Default.Close, contentDescription = "Clear")
+            Icon(Icons.Default.Close, contentDescription = "Clear", tint = mutedColor)
         }
 
     }
@@ -379,12 +394,14 @@ private fun ListContent(
 
 @Composable
 private fun SearchHeader(text: String) {
+    val appColors = MaterialTheme.appColors
     Text(
         text = text,
         style = MaterialTheme.typography.titleMedium,
+        color = appColors.textPrimary,
         modifier = Modifier
             .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.surfaceVariant)
+            .background(appColors.progressTrack)
             .padding(horizontal = 20.dp, vertical = 10.dp)
             .wrapContentSize(Alignment.CenterStart)
     )

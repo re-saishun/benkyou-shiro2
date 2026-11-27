@@ -62,6 +62,8 @@ import ua.syt0r.kanji.presentation.common.AppDropdownMenu
 import ua.syt0r.kanji.presentation.common.AppDropdownMenuItem
 import ua.syt0r.kanji.presentation.common.MultiplatformDialog
 import ua.syt0r.kanji.presentation.common.resources.string.resolveString
+import ua.syt0r.kanji.presentation.common.theme.appCardBorder
+import ua.syt0r.kanji.presentation.common.theme.appColors
 import ua.syt0r.kanji.presentation.common.ui.FancyLoading
 import ua.syt0r.kanji.presentation.screen.main.screen.home.screen.grammar_dashboard.GrammarDashboardScreenContract.CatalogState
 import ua.syt0r.kanji.presentation.screen.main.screen.home.screen.grammar_dashboard.GrammarDashboardScreenContract.ScreenState
@@ -231,6 +233,7 @@ private fun GrammarDeckCard(
     onStartPractice: (GrammarDeckPracticeItem, List<GrammarPracticeScreenConfiguration.Card>) -> Unit
 ) {
     var showMenu by remember { mutableStateOf(false) }
+    val appColors = MaterialTheme.appColors
 
     Surface(
         modifier = Modifier
@@ -242,8 +245,10 @@ private fun GrammarDeckCard(
             )
             .testTag("grammar_deck_${deck.deckId}"),
         shape = MaterialTheme.shapes.medium,
-        color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.55f),
-        tonalElevation = 1.dp
+        color = appColors.card,
+        contentColor = appColors.textPrimary,
+        border = appCardBorder(),
+        tonalElevation = if (appColors.useCardBorder) 0.dp else 1.dp
     ) {
         Column(
             modifier = Modifier.padding(16.dp),

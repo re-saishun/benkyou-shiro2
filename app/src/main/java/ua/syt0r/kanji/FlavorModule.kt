@@ -17,7 +17,8 @@ val flavorModule = module {
     multiplatformViewModel<FdroidAccountScreenContract.ViewModel> {
         FdroidAccountScreenViewModel(
             coroutineScope = it.component1(),
-            accountManager = get()
+            accountManager = get(),
+            supabaseService = get()
         )
     }
 

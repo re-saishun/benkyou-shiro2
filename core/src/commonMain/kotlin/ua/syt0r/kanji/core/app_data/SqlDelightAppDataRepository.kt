@@ -134,6 +134,30 @@ class SqlDelightAppDataRepository(
     }
 
 
+    override suspend fun getStrokeCounts(
+        characters: List<String>
+    ): Map<String, Int> {
+        if (characters.isEmpty()) return emptyMap()
+        return lettersQuery {
+            characters.distinct()
+                .chunked(200)
+                .flatMap { getStrokeCountsForCharacters(it).executeAsList() }
+                .associate { it.character to it.strokes_count.toInt() }
+        }
+    }
+
+    override suspend fun getCharactersWithReadings(
+        characters: List<String>
+    ): Set<String> {
+        if (characters.isEmpty()) return emptySet()
+        return lettersQuery {
+            characters.distinct()
+                .chunked(200)
+                .flatMap { getCharactersWithReadings(it).executeAsList() }
+                .toSet()
+        }
+    }
+
     override suspend fun getWordsWithTextCount(text: String): Int = vocabQuery {
         getCountOfVocabReadingsWithText(text = text, includeKanjiReadings = true).executeAsOne()
             .toInt()
@@ -142,24 +166,36 @@ class SqlDelightAppDataRepository(
     override suspend fun getWordsWithText(
         text: String, offset: Int, limit: Int
     ): List<JapaneseWord> = vocabQuery {
-        getVocabReadingsWithText(text, true, offset.toLong(), limit.toLong())
+        val rows = getVocabReadingsWithText(text, true, offset.toLong(), limit.toLong())
             .executeAsList()
-            .map { element ->
-                getWord(
-                    id = element.entry_id,
+        hydrateWordsBulk(
+            rows.map { element ->
+                WordHydrationSeed(
+                    entryId = element.entry_id,
                     kanaReading = element.reading.takeIf { element.isKana == 1L },
                     kanjiReading = element.reading.takeIf { element.isKana == 0L }
-                )!!
+                )
             }
+        )
     }
 
     override suspend fun getWordExamples(letter: String): List<JapaneseWord> {
         val entries = lettersQuery { getVocabExamplesForLetter(letter).executeAsList() }
+        if (entries.isEmpty()) return emptyList()
 
         val wordIdList = entries.map { it.vocab_id }.toSet()
         val vocabSenses = getWordSenses(wordIdList).associateBy { it.wordId }
+        val kanjiTexts = entries.mapNotNull { it.kanji }.distinct()
 
         return vocabQuery {
+            val furiganaMap = if (kanjiTexts.isEmpty()) {
+                emptyMap()
+            } else {
+                kanjiTexts.chunked(200)
+                    .flatMap { getFuriganaForTexts(it).executeAsList() }
+                    .associate { (it.text to it.reading) to it.furigana.parseAsFurigana() }
+            }
+
             entries.map { entry ->
                 val sense = vocabSenses.getValue(entry.vocab_id)
                     .senseList.first()
@@ -169,9 +205,7 @@ class SqlDelightAppDataRepository(
                     reading = VocabReading(
                         kanjiReading = entry.kanji,
                         kanaReading = entry.kana,
-                        furigana = entry.kanji?.let { searchFurigana(entry.kanji, entry.kana) }
-                            ?.executeAsOneOrNull()
-                            ?.parseAsFurigana()
+                        furigana = entry.kanji?.let { furiganaMap[it to entry.kana] }
                     ),
                     glossary = sense.glossary,
                     partOfSpeechList = emptyList()
@@ -249,14 +283,21 @@ class SqlDelightAppDataRepository(
         limit: Int,
         offset: Int
     ): List<JapaneseWord> = vocabQuery {
-        getVocabReadingsWithText(
+        val rows = getVocabReadingsWithText(
             text = char,
             includeKanjiReadings = false,
             offset = offset.toLong(),
             limit = limit.toLong()
+        ).executeAsList()
+        hydrateWordsBulk(
+            rows.map {
+                WordHydrationSeed(
+                    entryId = it.entry_id,
+                    kanaReading = it.reading,
+                    kanjiReading = null
+                )
+            }
         )
-            .executeAsList()
-            .map { getWord(it.entry_id, it.reading, null)!! }
     }
 
     override suspend fun getSentencesWithTextCount(text: String): Int = vocabQuery {
@@ -450,6 +491,79 @@ class SqlDelightAppDataRepository(
         }
         Logger.d("Word not found, id[$id], kanaReading[$kanaReading], kanjiReading[$kanjiReading]")
         return null
+    }
+
+    private data class WordHydrationSeed(
+        val entryId: Long,
+        val kanaReading: String?,
+        val kanjiReading: String?
+    )
+
+    private fun VocabQueries.hydrateWordsBulk(
+        seeds: List<WordHydrationSeed>
+    ): List<JapaneseWord> {
+        if (seeds.isEmpty()) return emptyList()
+
+        val entryIds = seeds.map { it.entryId }.distinct()
+        val kanjiByEntry = entryIds.chunked(200)
+            .flatMap { getVocabKanjiElementsForEntries(it).executeAsList() }
+            .groupBy { it.entry_id }
+        val kanaByEntry = entryIds.chunked(200)
+            .flatMap { getVocabKanaElementsForEntries(it).executeAsList() }
+            .groupBy { it.entry_id }
+        val sensesByEntry = entryIds.chunked(200)
+            .flatMap { getVocabSensesWithDetails(it, DELIMITER).executeAsList() }
+            .groupBy { it.entry_id }
+
+        val preliminary = seeds.map { seed ->
+            val kanjiList = kanjiByEntry[seed.entryId].orEmpty()
+            val kanaList = kanaByEntry[seed.entryId].orEmpty()
+            val resolvedKana = seed.kanaReading
+                ?: kanaList.firstOrNull()?.reading
+            val firstKanaNoKanji = kanaList.firstOrNull { it.reading == resolvedKana }?.no_kanji == 1L
+            val resolvedKanji = seed.kanjiReading
+                ?: if (firstKanaNoKanji) null else kanjiList.firstOrNull()?.reading
+            Triple(seed, resolvedKanji, resolvedKana)
+        }
+
+        val furiganaTexts = preliminary.mapNotNull { it.second }.distinct()
+        val furiganaMap = if (furiganaTexts.isEmpty()) {
+            emptyMap()
+        } else {
+            furiganaTexts.chunked(200)
+                .flatMap { getFuriganaForTexts(it).executeAsList() }
+                .associate { (it.text to it.reading) to it.furigana.parseAsFurigana() }
+        }
+
+        return preliminary.mapNotNull { (seed, resolvedKanji, resolvedKana) ->
+            val senses = sensesByEntry[seed.entryId].orEmpty()
+            val matchedSense = senses.firstOrNull { sense ->
+                val kanjiRestr = sense.kanji_restrictions?.split(DELIMITER)?.toSet() ?: emptySet()
+                val kanaRestr = sense.kana_restrictions?.split(DELIMITER)?.toSet() ?: emptySet()
+                val kanjiOk = kanjiRestr.isEmpty() || (resolvedKanji != null && kanjiRestr.contains(resolvedKanji))
+                val kanaOk = kanaRestr.isEmpty() || (resolvedKana != null && kanaRestr.contains(resolvedKana))
+                kanjiOk && kanaOk
+            }
+
+            if (matchedSense != null && resolvedKana != null) {
+                JapaneseWord(
+                    id = seed.entryId,
+                    reading = VocabReading(
+                        kanjiReading = resolvedKanji,
+                        kanaReading = resolvedKana,
+                        furigana = resolvedKanji?.let { furiganaMap[it to resolvedKana] }
+                    ),
+                    glossary = matchedSense.glosses?.split(DELIMITER) ?: emptyList(),
+                    partOfSpeechList = matchedSense.explanations?.split(DELIMITER) ?: emptyList()
+                )
+            } else {
+                getWord(
+                    id = seed.entryId,
+                    kanaReading = seed.kanaReading,
+                    kanjiReading = seed.kanjiReading
+                )
+            }
+        }
     }
 
     private fun String.parseAsFurigana(): FuriganaString = FuriganaDBEntityCreator

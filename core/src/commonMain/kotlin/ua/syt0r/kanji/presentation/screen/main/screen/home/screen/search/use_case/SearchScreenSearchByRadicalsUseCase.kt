@@ -15,7 +15,9 @@ class SearchScreenSearchByRadicalsUseCase(
         val foundCharacters = radicals.toList()
             .let { appDataRepository.getCharactersWithRadicals(it) }
 
-        val dataList = foundCharacters.map { it to appDataRepository.getStrokes(it).size }
+        val strokeCounts = appDataRepository.getStrokeCounts(foundCharacters)
+
+        val dataList = foundCharacters.map { it to (strokeCounts[it] ?: 0) }
             .groupBy { (_, strokesCount) -> strokesCount }
             .map { (strokesCount, listOfPairs) -> strokesCount to listOfPairs.map { it.first } }
             .sortedBy { (strokesCount, _) -> strokesCount }

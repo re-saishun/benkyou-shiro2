@@ -67,6 +67,8 @@ object JapaneseStrings : Strings {
     override val letterPractice: LetterPracticeStrings = JapaneseLetterPracticeStrings
     override val vocabPractice: VocabPracticeStrings = JapaneseVocabPracticeStrings
     override val info: InfoScreenStrings = JapaneseInfoScreenStrings
+    override val speak: SpeakStrings = JapaneseSpeakStrings
+    override val dailyStreak: DailyStreakStrings = JapaneseDailyStreakStrings
 
     override val urlPickerMessage: String = "開く"
     override val urlPickerErrorMessage: String = "ブラウザーが見つかりません"
@@ -81,6 +83,7 @@ object JapaneseHomeStrings : HomeStrings {
     override val generalDashboardTabLabel: String = "ホーム"
     override val grammarDashboardTabLabel: String = "文法"
     override val memorizeDashboardTabLabel: String = "暗記"
+    override val speakTabLabel: String = "会話"
     override val lettersDashboardTabLabel: String = "文字"
     override val vocabDashboardTabLabel: String = "単語"
     override val statsTabLabel: String = "統計"
@@ -275,10 +278,17 @@ object JapaneseSettingsStrings : SettingsStrings {
     override val analyticsTitle: String = "分析レポート"
     override val analyticsMessage: String = "アプリを向上させるために匿名データの送信を許可する"
     override val themeTitle: String = "テーマ"
+    override val themeModeTitle: String = "外観モード"
     override val themeSystem: String = "システムに従う"
     override val themeLight: String = "ライト"
     override val themeDark: String = "ダーク"
     override val themeAmoled: String = "AMOLED（純黒）"
+    override val themePaletteShu: String = "Shu（朱）"
+    override val themePaletteSumi: String = "Sumi（墨）"
+    override val themePaletteMatcha: String = "Matcha（抹茶）"
+    override val themePaletteSakura: String = "Sakura（桜）"
+    override val themePaletteAi: String = "Ai（藍）"
+    override val themePaletteSuna: String = "Suna（砂）"
     override val reminderTitle: String = "リマインダー通知"
     override val reminderEnabled: String = "有効"
     override val reminderDisabled: String = "無効"
@@ -292,6 +302,11 @@ object JapaneseSettingsStrings : SettingsStrings {
     override val backupTitle: String = "バックアップと復元"
     override val donateTitle: String = "寄付"
     override val aboutTitle: String = "このアプリについて"
+    override val accountSectionDescription: String = "アカウント、バックアップと復元、クラウド同期"
+    override val tutorialDescription: String = "学習モードとSRSの基本ガイド"
+    override val systemTitle: String = "システム"
+    override val systemDescription: String = "テーマ、通知、言語、初期タブ、リセット時刻"
+    override val aboutDescription: String = "アプリ情報、Kanji Dojoフォーク、GitHub、寄付"
     override val pickerDialogCancel: String = "キャンセル"
     override val pickerDialogApply: String = "適用"
 }
@@ -308,12 +323,25 @@ object JapaneseReminderDialogStrings : ReminderDialogStrings {
 
 object JapaneseAboutStrings : AboutStrings {
     override val title: String = "このアプリについて"
+    override val appSubtitle: String = "漢字・文法・単語・AI音声会話の総合日本語学習アプリ"
     override val version: (versionName: String) -> String = { "バージョン: $it" }
-    override val githubTitle: String = "プロジェクトのGitHubページ"
+    override val forkAttributionTitle: String = "Kanji Dojo のフォーク"
+    override val forkAttributionDescription: String = "オープンソースの Kanji Dojo をベースに開発"
+    override val githubTitle: String = "GitHub"
+    override val githubDescription: String = "ソースコード、バグ報告、議論"
+    override val kanjiDojoGithubTitle: String = "Kanji Dojo (オリジナル GitHub)"
+    override val kanjiDojoGithubDescription: String = "syt0r による元のオープンソースリポジトリ"
+    override val socialTitle: String = "ソーシャル"
+    override val socialDescription: String = "Discord コミュニティと YouTube"
+    override val downloadsTitle: String = "ダウンロード"
+    override val downloadsDescription: String = "公式リリースと各プラットフォーム版"
+    override val feedbackTitle: String = "フィードバック"
+    override val feedbackDescription: String = "バグ報告や機能のリクエストを送信"
+    override val donateTitle: String = "寄付"
+    override val donateDescription: String = "開発を支援する"
     override val versionChangesTitle: String = "変更履歴"
     override val versionChangesDescription: String = "アプリの変更履歴"
     override val versionChangesButton: String = "閉じる"
-    override val githubDescription: String = "ソースコード、バグ報告、議論"
     override val creditsTitle: String = "クレジット"
     override val creditsDescription: String = "使用されるライブラリとデータソース"
 }
@@ -709,6 +737,57 @@ object JapaneseAccountScreenStrings : AccountScreenStrings {
     override val issueSubscriptionOutdatedMessage = "更新するにはクリックしてください"
     override val issueOtherTitle = "エラー"
     override val issueOtherMessageFallback = "不明なエラー"
+
+    override val supabaseSectionTitle = "クラウドアカウント (Supabase)"
+    override val supabaseSectionDescription = "GoogleでログインしてSupabaseに学習進捗を保存・復元できます"
+    override val continueWithGoogleSupabase = "Googleで続ける"
+    override val supabaseSignedInLabel = "Googleでログイン中"
+    override val supabaseUploadBackupButton = "Supabaseへバックアップをアップロード"
+    override val supabaseRestoreBackupButton = "Supabaseからバックアップを復元"
+    override val supabaseLastSyncTemplate = "最終同期: %s"
+    override val supabaseNotConfiguredHint = "クラウドログインを有効にするには AI Studio Secrets に SUPABASE_URL と SUPABASE_ANON_KEY を設定してください。"
+    override val legacyMigrationPrompt = "以前の Kanji Dojo アカウントから移行しますか？旧アカウントでログイン"
+    override val legacyMigrationBannerTitle = "旧アカウント接続済み"
+    override val legacyMigrationPullAndSyncButton = "旧クラウドデータを取得してSupabaseへ同期"
+    override val legacySignOutButton = "旧アカウントからログアウト"
+}
+
+object JapaneseSpeakStrings : SpeakStrings {
+    override val title = "会話"
+    override val subtitle = "AIチューターとリアルタイム日本語音声通話練習"
+    override val micPermissionNeededTitle = "マイクの権限が必要です"
+    override val micPermissionNeededMessage = "ライブ通話中にAIと話すためにマイクへのアクセスを許可してください。"
+    override val grantMicPermissionButton = "マイクを許可"
+    override val startCallButton = "ライブ音声通話を開始"
+    override val connectingLabel = "ライブ音声を接続中..."
+    override val liveStatusLabel = "通話中"
+    override val endCallButton = "通話を終了"
+    override val muteMicButton = "ミュート"
+    override val unmuteMicButton = "ミュート解除"
+    override val topicSectionTitle = "会話トピック"
+    override val topicFreeTalk = "フリートーク"
+    override val topicCafeOrder = "カフェで注文"
+    override val topicConvenienceStore = "コンビニ"
+    override val topicStationTravel = "駅・旅行"
+    override val topicSelfIntro = "自己紹介"
+    override val topicCustom = "カスタム"
+    override val levelSectionTitle = "レベル"
+    override val customPromptLabel = "カスタムシチュエーション"
+    override val customPromptPlaceholder = "例：ラーメン屋で注文する練習"
+    override val starterPhrasesTitle = "話し始めのフレーズ"
+    override val liveCallTips = "自然な日本語で話してみてください。AIがJLPTレベルに合わせて優しく応答します。"
+    override val unsupportedMessage = "ライブ音声通話はFirebase AI Logic対応のAndroid端末で利用できます。"
+}
+
+object JapaneseDailyStreakStrings : DailyStreakStrings {
+    override val currentLabel = "現在"
+    override val bestLabel = "最長"
+    override val totalDaysLabel = "累計日数"
+    override val statusCompleted = "今日達成"
+    override val statusAtRisk = "要練習"
+    override val statusExpired = "記録リセット"
+    override val statusStart = "準備完了"
+    override val daysUnit: (Int) -> String = { "${it}日" }
 }
 
 object JapaneseSyncScreenStrings : SyncScreenStrings {

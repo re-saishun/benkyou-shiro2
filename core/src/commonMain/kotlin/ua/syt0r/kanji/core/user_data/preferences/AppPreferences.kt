@@ -7,6 +7,7 @@ import ua.syt0r.kanji.core.suspended_property.BooleanSuspendedPropertyType
 import ua.syt0r.kanji.core.suspended_property.EnumSuspendedPropertyType.Companion.enumSuspendedPropertyType
 import ua.syt0r.kanji.core.suspended_property.InstantSuspendedPropertyType
 import ua.syt0r.kanji.core.suspended_property.LocalTimeSuspendedPropertyType
+import ua.syt0r.kanji.core.suspended_property.LongSuspendedPropertyType
 import ua.syt0r.kanji.core.suspended_property.StringSuspendedPropertyType
 import ua.syt0r.kanji.core.suspended_property.SuspendedProperty
 import ua.syt0r.kanji.core.suspended_property.SuspendedPropertyCreatorScope
@@ -131,6 +132,12 @@ class AppPreferences(
         initialValue = { PreferencesTheme.System }
     )
 
+    override val themePalette: SuspendedProperty<PreferencesThemePalette> = createProperty(
+        type = enumSuspendedPropertyType<PreferencesThemePalette>(),
+        key = "theme_palette",
+        initialValue = { PreferencesThemePalette.Shu }
+    )
+
     override val dailyLimitEnabled: SuspendedProperty<Boolean> = createProperty(
         type = BooleanSuspendedPropertyType,
         key = "daily_limit_enabled",
@@ -252,6 +259,41 @@ class AppPreferences(
         type = StringSuspendedPropertyType,
         key = "grammar_catalog_url",
         initialValue = { "" },
+        enableBackup = false
+    )
+
+    override val supabaseAccessToken: SuspendedProperty<String?> = createNullableProperty(
+        type = StringSuspendedPropertyType,
+        key = "supabase_access_token",
+        initialValue = { null },
+        enableBackup = false
+    )
+
+    override val supabaseRefreshToken: SuspendedProperty<String?> = createNullableProperty(
+        type = StringSuspendedPropertyType,
+        key = "supabase_refresh_token",
+        initialValue = { null },
+        enableBackup = false
+    )
+
+    override val supabaseUserEmail: SuspendedProperty<String?> = createNullableProperty(
+        type = StringSuspendedPropertyType,
+        key = "supabase_user_email",
+        initialValue = { null },
+        enableBackup = false
+    )
+
+    override val supabaseUserId: SuspendedProperty<String?> = createNullableProperty(
+        type = StringSuspendedPropertyType,
+        key = "supabase_user_id",
+        initialValue = { null },
+        enableBackup = false
+    )
+
+    override val supabaseLastSyncTimestamp: SuspendedProperty<Long?> = createNullableProperty(
+        type = LongSuspendedPropertyType,
+        key = "supabase_last_sync_timestamp",
+        initialValue = { null },
         enableBackup = false
     )
 

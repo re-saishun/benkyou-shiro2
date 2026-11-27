@@ -17,9 +17,12 @@ open class KanjiDojoActivity : AppCompatActivity() {
     private val deepLinkHandler by inject<DeepLinkHandler>()
     private val themeManager by inject<ThemeManager>()
 
+    protected open fun onPreContentCreate() {}
+
     @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        onPreContentCreate()
         enableEdgeToEdge()
         themeManager.invalidate()
 

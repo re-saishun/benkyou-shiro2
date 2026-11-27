@@ -1,10 +1,12 @@
 package ua.syt0r.kanji.core.grammar
 
 import io.ktor.client.request.get
+import io.ktor.client.request.header
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.isSuccess
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
+import ua.syt0r.kanji.core.AppSecretsConfig
 import ua.syt0r.kanji.core.NetworkClients
 import ua.syt0r.kanji.core.user_data.database.GrammarExample
 import ua.syt0r.kanji.core.user_data.database.GrammarPointData
@@ -84,7 +86,8 @@ interface GrammarCatalogService {
 class DefaultGrammarCatalogService(
     private val networkClients: NetworkClients,
     private val repository: GrammarPracticeRepository,
-    private val appPreferences: PreferencesContract.AppPreferences
+    private val appPreferences: PreferencesContract.AppPreferences,
+    private val appSecretsConfig: AppSecretsConfig
 ) : GrammarCatalogService {
 
     private val json = Json {
@@ -94,7 +97,14 @@ class DefaultGrammarCatalogService(
     }
 
     override suspend fun getSavedCatalogUrl(): String {
-        return appPreferences.grammarCatalogUrl.get().ifBlank { DefaultGrammarCatalogUrl }
+        val saved = appPreferences.grammarCatalogUrl.get().trim()
+        val secretUrl = appSecretsConfig.resolvedGithubCatalogUrl
+        return when {
+            !secretUrl.isNullOrBlank() && (saved.isBlank() || saved == DefaultGrammarCatalogUrl) -> secretUrl
+            saved.isNotBlank() -> saved
+            !secretUrl.isNullOrBlank() -> secretUrl
+            else -> DefaultGrammarCatalogUrl
+        }
     }
 
     override suspend fun fetchCatalog(
@@ -169,7 +179,15 @@ class DefaultGrammarCatalogService(
     }
 
     private suspend fun download(url: String): String {
-        val response = networkClients.unauthenticatedClient.get(url)
+        val token = appSecretsConfig.githubToken
+        val isGithubHost = url.contains("github.com", ignoreCase = true) ||
+                url.contains("githubusercontent.com", ignoreCase = true)
+        val response = networkClients.unauthenticatedClient.get(url) {
+            if (isGithubHost && token.isNotBlank()) {
+                header("Authorization", "Bearer $token")
+            }
+            header("Accept", "application/vnd.github.raw+json, application/json")
+        }
         if (!response.status.isSuccess()) {
             throw IllegalStateException("HTTP ${response.status.value} ${response.status.description}")
         }

@@ -110,3 +110,14 @@ WITH characters_with_selected_radicals AS (SELECT kanji
 SELECT radical
 FROM kanji_radical
 WHERE kanji IN characters_with_selected_radicals;
+
+getStrokeCountsForCharacters:
+SELECT character, COUNT(*) AS strokes_count
+FROM character_stroke
+WHERE character IN :characters
+GROUP BY character;
+
+getCharactersWithReadings:
+SELECT DISTINCT kanji
+FROM kanji_reading
+WHERE kanji IN :characters;

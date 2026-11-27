@@ -29,11 +29,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import ua.syt0r.kanji.presentation.common.theme.appCardBorder
+import ua.syt0r.kanji.presentation.common.theme.appColors
 
 @Composable
 fun MultiplatformDialog(
     onDismissRequest: () -> Unit,
-    containerColor: Color = MaterialTheme.colorScheme.surface,
+    containerColor: Color = MaterialTheme.appColors.dialogSurface,
     content: @Composable () -> Unit,
 ) {
 
@@ -44,7 +46,10 @@ fun MultiplatformDialog(
                 modifier = Modifier
                     .width(360.dp)
                     .clip(MaterialTheme.shapes.large),
-                color = containerColor
+                shape = MaterialTheme.shapes.large,
+                color = containerColor,
+                contentColor = MaterialTheme.appColors.textPrimary,
+                border = appCardBorder()
             ) {
                 content()
             }
@@ -107,8 +112,8 @@ fun ExperimentalMultiplatformDialog(
 
             val contentScrollState = rememberScrollState()
 
-            val visibleDividerColor = MaterialTheme.colorScheme.outlineVariant
-            val hiddenDividerColor = MaterialTheme.colorScheme.surface
+            val visibleDividerColor = MaterialTheme.appColors.progressTrack
+            val hiddenDividerColor = MaterialTheme.appColors.dialogSurface
 
             val topDividerColor = animateColorAsState(
                 targetValue = when {

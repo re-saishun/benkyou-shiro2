@@ -23,6 +23,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -38,6 +39,8 @@ import kotlinx.datetime.LocalDate
 import kotlinx.datetime.minus
 import kotlinx.datetime.plus
 import ua.syt0r.kanji.presentation.common.resources.string.resolveString
+import ua.syt0r.kanji.presentation.common.theme.appCardBorder
+import ua.syt0r.kanji.presentation.common.theme.appColors
 import ua.syt0r.kanji.presentation.common.ui.AutoSizeText
 import ua.syt0r.kanji.presentation.common.ui.FancyLoading
 import ua.syt0r.kanji.presentation.common.ui.LocalOrientation
@@ -433,13 +436,24 @@ private fun InfoCard(
     subtitle: String,
     modifier: Modifier = Modifier
 ) {
-    Card(modifier = modifier) {
+    val appColors = MaterialTheme.appColors
+    Card(
+        modifier = modifier,
+        colors = CardDefaults.cardColors(
+            containerColor = appColors.card,
+            contentColor = appColors.textPrimary
+        ),
+        border = appCardBorder()
+    ) {
         Column(Modifier.padding(20.dp)) {
             AutoSizeText(
                 text = title,
                 style = MaterialTheme.typography.displayMedium
             )
-            Text(subtitle)
+            Text(
+                text = subtitle,
+                color = appColors.textMuted
+            )
         }
     }
 }

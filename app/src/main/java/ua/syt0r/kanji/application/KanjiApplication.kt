@@ -22,6 +22,8 @@ class KanjiApplication : Application() {
             loadKoinModules(modules)
         }.koin
 
+        registerActivityLifecycleCallbacks(koin.get<ua.syt0r.kanji.auth.CurrentActivityTracker>())
+
         // Dictionary database is created/patched lazily (copy from assets + language patch),
         // start it in background now so the first Search open doesn't wait for it.
         // provideAsync() starts work on its own IO scope and returns immediately.

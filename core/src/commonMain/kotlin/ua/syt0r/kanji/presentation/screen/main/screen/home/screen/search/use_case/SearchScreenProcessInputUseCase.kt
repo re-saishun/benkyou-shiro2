@@ -2,7 +2,6 @@ package ua.syt0r.kanji.presentation.screen.main.screen.home.screen.search.use_ca
 
 import androidx.compose.runtime.mutableStateOf
 import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import ua.syt0r.kanji.core.app_data.AppDataRepository
 import ua.syt0r.kanji.core.japanese.isKana
@@ -17,15 +16,26 @@ class SearchScreenProcessInputUseCase(
         input: String
     ): SearchScreenContract.ScreenState = coroutineScope {
 
-        // Characters and words are independent queries, run them concurrently.
-        // Each distinct character is checked only once, original order is preserved.
         val knownCharactersDeferred = async {
-            val distinctCharacters = input.toSet()
-            val knownSet = distinctCharacters.map { char ->
-                async { char to isKnownCharacter(char) }
-            }.awaitAll().filter { it.second }.map { it.first }.toSet()
+            val distinctStrings = input.map { it.toString() }.distinct()
+            if (distinctStrings.isEmpty()) return@async emptyList()
 
-            input.filter { it in knownSet }.map { it.toString() }
+            val strokeCounts = appDataRepository.getStrokeCounts(distinctStrings)
+            val charactersWithStrokes = strokeCounts.keys
+            val nonKanaWithStrokes = distinctStrings
+                .filter { it.length == 1 && !it[0].isKana() && it in charactersWithStrokes }
+            val charactersWithReadings = if (nonKanaWithStrokes.isEmpty()) {
+                emptySet()
+            } else {
+                appDataRepository.getCharactersWithReadings(nonKanaWithStrokes)
+            }
+
+            val knownSet = distinctStrings.filter { ch ->
+                ch in charactersWithStrokes &&
+                        ((ch.length == 1 && ch[0].isKana()) || ch in charactersWithReadings)
+            }.toSet()
+
+            input.map { it.toString() }.filter { it in knownSet }
         }
 
         val wordsDeferred = async {
@@ -49,15 +59,6 @@ class SearchScreenProcessInputUseCase(
             words = mutableStateOf(PaginatableJapaneseWordList(wordsCount, words)),
             query = input
         )
-    }
-
-    private suspend fun isKnownCharacter(char: Char): Boolean {
-        val charString = char.toString()
-        val areStrokesAvailable = appDataRepository.getStrokes(charString).isNotEmpty()
-        return areStrokesAvailable && when {
-            char.isKana() -> true
-            else -> appDataRepository.getReadings(charString).isNotEmpty()
-        }
     }
 
 }

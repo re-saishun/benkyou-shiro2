@@ -1,21 +1,21 @@
 package ua.syt0r.kanji.presentation.screen.main.screen.home
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.MenuBook
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.Psychology
+import androidx.compose.material.icons.outlined.RecordVoiceOver
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.text.font.FontWeight
 import ua.syt0r.kanji.presentation.common.resources.icon.ExtraIcons
 import ua.syt0r.kanji.presentation.common.resources.icon.HomeOutline
 import ua.syt0r.kanji.presentation.common.resources.string.StringResolveScope
-import ua.syt0r.kanji.presentation.common.textDp
 import ua.syt0r.kanji.presentation.screen.main.MainNavigationState
 import ua.syt0r.kanji.presentation.screen.main.screen.home.screen.general_dashboard.GeneralDashboardScreen
 import ua.syt0r.kanji.presentation.screen.main.screen.home.screen.grammar_dashboard.GrammarDashboardScreen
 import ua.syt0r.kanji.presentation.screen.main.screen.home.screen.memorize.MemorizeScreen
 import ua.syt0r.kanji.presentation.screen.main.screen.home.screen.search.SearchScreen
+import ua.syt0r.kanji.presentation.screen.main.screen.home.screen.speak.SpeakScreen
 
 enum class HomeScreenTab(
     val analyticsName: String,
@@ -32,13 +32,7 @@ enum class HomeScreenTab(
     ),
     GrammarDashboard(
         analyticsName = "grammar_dashboard",
-        iconContent = {
-            Text(
-                text = "文",
-                fontSize = 18.textDp,
-                fontWeight = FontWeight.Bold
-            )
-        },
+        iconContent = { Icon(Icons.AutoMirrored.Outlined.MenuBook, null) },
         titleResolver = { home.grammarDashboardTabLabel },
         content = { GrammarDashboardScreen(mainNavigationState = it) }
     ),
@@ -47,6 +41,12 @@ enum class HomeScreenTab(
         iconContent = { Icon(Icons.Outlined.Psychology, null) },
         titleResolver = { home.memorizeDashboardTabLabel },
         content = { MemorizeScreen(mainNavigationState = it) }
+    ),
+    Speak(
+        analyticsName = "speak",
+        iconContent = { Icon(Icons.Outlined.RecordVoiceOver, null) },
+        titleResolver = { home.speakTabLabel },
+        content = { SpeakScreen() }
     ),
     Search(
         analyticsName = "search",

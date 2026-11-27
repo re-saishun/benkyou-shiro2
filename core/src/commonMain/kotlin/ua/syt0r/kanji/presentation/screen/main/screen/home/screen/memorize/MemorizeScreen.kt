@@ -45,6 +45,8 @@ import ua.syt0r.kanji.core.srs.LetterSrsManager
 import ua.syt0r.kanji.core.srs.VocabSrsManager
 import ua.syt0r.kanji.presentation.common.MultiplatformBackHandler
 import ua.syt0r.kanji.presentation.common.resources.string.resolveString
+import ua.syt0r.kanji.presentation.common.theme.appCardBorder
+import ua.syt0r.kanji.presentation.common.theme.appColors
 import ua.syt0r.kanji.presentation.common.ui.LocalOrientation
 import ua.syt0r.kanji.presentation.common.ui.Orientation
 import ua.syt0r.kanji.presentation.screen.main.MainNavigationState
@@ -240,14 +242,18 @@ private fun MemorizeCard(
     modifier: Modifier = Modifier
 ) {
 
+    val appColors = MaterialTheme.appColors
+
     Surface(
         modifier = modifier
             .clip(MaterialTheme.shapes.extraLarge)
             .clickable(onClick = onClick)
             .testTag(testTagValue),
         shape = MaterialTheme.shapes.extraLarge,
-        color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.55f),
-        tonalElevation = 1.dp
+        color = appColors.card,
+        contentColor = appColors.textPrimary,
+        border = appCardBorder(),
+        tonalElevation = if (appColors.useCardBorder) 0.dp else 1.dp
     ) {
         Column(
             modifier = Modifier.fillMaxSize().padding(20.dp),
@@ -258,19 +264,20 @@ private fun MemorizeCard(
                 text = glyph,
                 fontSize = 56.sp,
                 fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.primary
+                color = appColors.accent
             )
 
             Text(
                 text = title,
                 style = MaterialTheme.typography.headlineSmall,
-                fontWeight = FontWeight.SemiBold
+                fontWeight = FontWeight.SemiBold,
+                color = appColors.textPrimary
             )
 
             Text(
                 text = subtitle,
                 style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                color = appColors.textMuted
             )
 
             Box(Modifier.weight(1f))
@@ -284,7 +291,7 @@ private fun MemorizeCard(
                         strings.dueCountLabel(summary.due)
                     ).joinToString(" · "),
                     style = MaterialTheme.typography.labelLarge,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    color = appColors.textMuted
                 )
             }
 

@@ -29,6 +29,7 @@ import ua.syt0r.kanji.core.AccountManager
 import ua.syt0r.kanji.core.ApiRequestIssue
 import ua.syt0r.kanji.core.emitWhenWithSubscribers
 import ua.syt0r.kanji.core.format
+import ua.syt0r.kanji.core.streak.DailyStreakTracker
 import ua.syt0r.kanji.core.sync.SyncConflictResolveStrategy
 import ua.syt0r.kanji.core.sync.SyncDataDiffType
 import ua.syt0r.kanji.core.sync.SyncFeatureState
@@ -48,7 +49,8 @@ class MainScreenViewModel(
     appPreferences: PreferencesContract.AppPreferences,
     accountManager: AccountManager,
     migrationObservable: UserDataDatabaseContract.MigrationObservable,
-    private val syncManager: SyncManager
+    private val syncManager: SyncManager,
+    dailyStreakTracker: DailyStreakTracker
 ) : MainContract.ViewModel {
 
     private val _notifications = MutableSharedFlow<MainSnackbarNotification>()
@@ -62,6 +64,10 @@ class MainScreenViewModel(
     override val showVersionChangeDialog: MutableState<Boolean> = mutableStateOf(false)
 
     init {
+
+        viewModelScope.launch {
+            dailyStreakTracker.checkAndUpdateStreakExpiration()
+        }
 
         viewModelScope.launch {
             val currentVersion = BuildConfig.versionName

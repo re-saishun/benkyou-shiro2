@@ -113,7 +113,7 @@ class SearchViewModel(
                     state.value = state.value.copy(isLoading = true)
                 }
             }
-            .debounce { input -> if (input.isBlank()) 0L else 150L }
+            .debounce { input -> if (input.isBlank()) 0L else 75L }
             .collectLatest { input ->
                 if (input.isBlank()) return@collectLatest
                 kotlin.runCatching {

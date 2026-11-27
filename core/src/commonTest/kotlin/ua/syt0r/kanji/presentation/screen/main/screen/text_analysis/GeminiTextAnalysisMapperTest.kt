@@ -15,6 +15,7 @@ import ua.syt0r.kanji.core.user_data.preferences.PreferencesLetterSortOption
 import ua.syt0r.kanji.core.user_data.preferences.PreferencesSyncDataInfo
 import ua.syt0r.kanji.core.user_data.preferences.PreferencesTextAnalysisProvider
 import ua.syt0r.kanji.core.user_data.preferences.PreferencesTheme
+import ua.syt0r.kanji.core.user_data.preferences.PreferencesThemePalette
 import ua.syt0r.kanji.core.user_data.preferences.PreferencesUserInfo
 import ua.syt0r.kanji.core.user_data.preferences.PreferencesVocabPracticeType
 import ua.syt0r.kanji.presentation.screen.main.screen.text_analysis.use_case.DefaultGeminiTextAnalysisUseCase
@@ -124,6 +125,7 @@ class GeminiTextAnalysisMapperTest {
             override val practicePreviewLayout: SuspendedProperty<PreferencesDeckDetailsLetterLayout> get() = error("Unused")
             override val kanaGroupsEnabled: SuspendedProperty<Boolean> get() = error("Unused")
             override val theme: SuspendedProperty<PreferencesTheme> get() = error("Unused")
+            override val themePalette: SuspendedProperty<PreferencesThemePalette> get() = error("Unused")
             override val dailyLimitEnabled: SuspendedProperty<Boolean> get() = error("Unused")
             override val dailyLimitConfigurationJson: SuspendedProperty<String> get() = error("Unused")
             override val reminderEnabled: SuspendedProperty<Boolean> get() = error("Unused")
@@ -142,6 +144,11 @@ class GeminiTextAnalysisMapperTest {
             override val textAnalysisProvider: SuspendedProperty<PreferencesTextAnalysisProvider> get() = error("Unused")
             override val textAnalysisGeminiApiKey: SuspendedProperty<String> get() = error("Unused")
             override val grammarCatalogUrl: SuspendedProperty<String> get() = error("Unused")
+            override val supabaseAccessToken: SuspendedProperty<String?> get() = error("Unused")
+            override val supabaseRefreshToken: SuspendedProperty<String?> get() = error("Unused")
+            override val supabaseUserEmail: SuspendedProperty<String?> get() = error("Unused")
+            override val supabaseUserId: SuspendedProperty<String?> get() = error("Unused")
+            override val supabaseLastSyncTimestamp: SuspendedProperty<Long?> get() = error("Unused")
         }
         return DefaultGeminiTextAnalysisUseCase(dummyNetworkClients, dummyPrefs)
     }

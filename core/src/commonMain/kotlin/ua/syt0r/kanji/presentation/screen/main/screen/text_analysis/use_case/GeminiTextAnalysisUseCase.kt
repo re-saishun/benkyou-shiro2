@@ -243,12 +243,8 @@ class DefaultGeminiTextAnalysisUseCase(
                 buildJsonArray {
                     add(
                         buildJsonArray {
-                            add(
-                                buildJsonArray {
-                                    add(JsonArray(currentWordsBatch.toList()))
-                                    add(JsonPrimitive(0))
-                                }
-                            )
+                            add(JsonArray(currentWordsBatch.toList()))
+                            add(JsonPrimitive(0))
                         }
                     )
                 }
